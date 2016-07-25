@@ -1,0 +1,234 @@
+{
+    "author": "chops",
+    "dependencies": {},
+    "keywords": [],
+    "name": "perlin",
+    "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
+        "displayName": "perlin",
+        "enableMultiJS": false,
+        "messageKeys": {
+            "bluetoothvibe": 1,
+            "hourlyvibe": 2,
+            "randomtime": 4,
+            "showbatt": 3,
+            "showdate": 0
+        },
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/pmenu.png",
+                    "menuIcon": true,
+                    "name": "IMAGE_MENU_ICON",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-1-0005.png",
+                    "name": "IMAGE_BG20",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-1-0004.png",
+                    "name": "IMAGE_BG19",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-1-0003.png",
+                    "name": "IMAGE_BG18",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-1-0002.png",
+                    "name": "IMAGE_BG17",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-1-0001.png",
+                    "name": "IMAGE_BG16",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0010.png",
+                    "name": "IMAGE_BG15",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0009.png",
+                    "name": "IMAGE_BG14",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0008.png",
+                    "name": "IMAGE_BG13",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0007.png",
+                    "name": "IMAGE_BG12",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0006.png",
+                    "name": "IMAGE_BG11",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0005.png",
+                    "name": "IMAGE_BG10",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0004.png",
+                    "name": "IMAGE_BG9",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0003.png",
+                    "name": "IMAGE_BG8",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0002.png",
+                    "name": "IMAGE_BG7",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-5-0010-2.png",
+                    "name": "IMAGE_BG6",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-4-0007-2.png",
+                    "name": "IMAGE_BG5",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-4-0005-2.png",
+                    "name": "IMAGE_BG4",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-3-0009-2.png",
+                    "name": "IMAGE_BG3",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-3-0006-2.png",
+                    "name": "IMAGE_BG2",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-0-0001-2.png",
+                    "name": "IMAGE_BG1",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/LECO_1976-Regular.ttf",
+                    "name": "FONT_LECO_62",
+                    "trackingAdjust": 5,
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/LECO_1976-Regular.ttf",
+                    "name": "FONT_LECO_14",
+                    "type": "font"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "6e909c30-2df7-4953-906f-cb40db4ee6d4",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.2.0"
+}
