@@ -27,6 +27,51 @@
                     "type": "bitmap"
                 },
                 {
+                    "file": "images/Face-5-0010-2.png",
+                    "name": "IMAGE_BG6",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-4-0007-2.png",
+                    "name": "IMAGE_BG5",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-4-0005-2.png",
+                    "name": "IMAGE_BG4",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-3-0009-2.png",
+                    "name": "IMAGE_BG3",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Face-3-0006-2.png",
+                    "name": "IMAGE_BG2",
+                    "targetPlatforms": [
+                        "basalt",
+                        "chalk"
+                    ],
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/Face-1-0005.png",
                     "name": "IMAGE_BG20",
                     "targetPlatforms": [
@@ -153,51 +198,6 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/Face-5-0010-2.png",
-                    "name": "IMAGE_BG6",
-                    "targetPlatforms": [
-                        "basalt",
-                        "chalk"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/Face-4-0007-2.png",
-                    "name": "IMAGE_BG5",
-                    "targetPlatforms": [
-                        "basalt",
-                        "chalk"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/Face-4-0005-2.png",
-                    "name": "IMAGE_BG4",
-                    "targetPlatforms": [
-                        "basalt",
-                        "chalk"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/Face-3-0009-2.png",
-                    "name": "IMAGE_BG3",
-                    "targetPlatforms": [
-                        "basalt",
-                        "chalk"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/Face-3-0006-2.png",
-                    "name": "IMAGE_BG2",
-                    "targetPlatforms": [
-                        "basalt",
-                        "chalk"
-                    ],
-                    "type": "bitmap"
-                },
-                {
                     "file": "images/Face-0-0001-2.png",
                     "name": "IMAGE_BG1",
                     "targetPlatforms": [
@@ -207,15 +207,15 @@
                     "type": "bitmap"
                 },
                 {
+                    "file": "fonts/LECO_1976-Regular.ttf",
+                    "name": "FONT_LECO_14",
+                    "type": "font"
+                },
+                {
                     "characterRegex": "[0-9]",
                     "file": "fonts/LECO_1976-Regular.ttf",
                     "name": "FONT_LECO_62",
                     "trackingAdjust": 5,
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/LECO_1976-Regular.ttf",
-                    "name": "FONT_LECO_14",
                     "type": "font"
                 }
             ]
