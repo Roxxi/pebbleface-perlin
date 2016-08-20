@@ -97,7 +97,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
 	  if (randomtime) {
 	  
-	theme_choice();
+	set_random_background();
 	  
 	  }
 	  
@@ -195,11 +195,11 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 	
 if (units_changed & HOUR_UNIT) {
     hourvibe(tick_time);
-	theme_choice();
+	set_random_background();
 }
 	
 if (units_changed & MINUTE_UNIT) { 	
-//theme_choice();  // used for testing	
+  //set_random_background();  // used for testing	
  }
 }
 
@@ -224,7 +224,6 @@ void handle_init(void) {
 	
   init_window();  
 	init_background( window_layer );
-  layer_add_child( window_layer, bitmap_layer_get_layer( background_layer ) );
 	
 	// resources
 
@@ -308,11 +307,8 @@ void handle_deinit(void) {
   bluetooth_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
 
-  layer_remove_from_parent(bitmap_layer_get_layer(background_layer));
-  bitmap_layer_destroy(background_layer);
-  gbitmap_destroy(background_image);
-  background_image = NULL;
-  
+  deinit_background();
+
   text_layer_destroy( layer_time_hour_text );
   text_layer_destroy( layer_time_min_text );
   text_layer_destroy( layer_date_text );

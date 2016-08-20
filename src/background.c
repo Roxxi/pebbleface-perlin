@@ -1,8 +1,8 @@
 #include <pebble.h>
 #include "background.h"
 
-GBitmap * background_image;
-BitmapLayer * background_layer;
+static GBitmap * background_image;
+static BitmapLayer * background_layer;
 
 #define RESOURCE_COUNT 19
 
@@ -34,7 +34,7 @@ RESOURCE_ID choose_background_image_resource_id( int key ) {
   return background_image_resource_ids[key%RESOURCE_COUNT]; 
 }
 
-GBitmap * select_new_background_image( ) {
+GBitmap * select_random_background_image() {
   int random_selection;
   RESOURCE_ID r_id;
   GBitmap * new_bg_image;
@@ -45,15 +45,17 @@ GBitmap * select_new_background_image( ) {
   return new_bg_image;    
 }
 
-void theme_choice( ) {	
+void set_random_background() {	
     
+  // select new image
+  background_image = select_random_background_image();
+  
   // collect previous image
   if (background_image) {
     gbitmap_destroy(background_image);
   	background_image = NULL;
   }
-  // set new image
-  background_image = select_new_background_image();
+ 
       
   if (background_image != NULL) {
 		bitmap_layer_set_bitmap(background_layer, background_image);
@@ -64,8 +66,18 @@ void theme_choice( ) {
 }
 
 void init_background( Layer * window_layer ){
-  background_image = select_new_background_image( );
+ 
+  background_image = select_random_background_image();
   background_layer = bitmap_layer_create( layer_get_frame( window_layer ) );
   bitmap_layer_set_bitmap( background_layer, background_image );
+  layer_add_child( window_layer, bitmap_layer_get_layer( background_layer ) );
 
+
+}
+
+void deinit_background( ){
+  layer_remove_from_parent(bitmap_layer_get_layer(background_layer));
+  bitmap_layer_destroy(background_layer);
+  gbitmap_destroy(background_image);
+  background_image = NULL;
 }

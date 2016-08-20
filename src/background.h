@@ -4,8 +4,8 @@
 
 typedef uint32_t RESOURCE_ID;
 
-extern GBitmap * background_image;
-extern BitmapLayer * background_layer;
 
-void theme_choice();
+
+void set_random_background();
 void init_background( Layer * window_layer );
+void deinit_background( );
