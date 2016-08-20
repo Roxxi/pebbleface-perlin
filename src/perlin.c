@@ -1,19 +1,22 @@
 /*
-Copyright (C) 2015 Mark Reed
+  Copyright (C) 2015 Mark Reed
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), 
-to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
-and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+  to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+  and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, 
-WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+  WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "pebble.h"
 #include "background.h"
+
+// set to 0 to for production builds
+#define DEV_MODE 1
 
 
 static AppSync sync;
@@ -57,77 +60,64 @@ TextLayer *battery_text_layer;
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   switch (key) {
-		  
-    case DATE_KEY:
-      showdate = new_tuple->value->uint8 != 0;
-	  persist_write_bool(DATE_KEY, showdate);
-	  
-	  if (showdate) {
-		 layer_set_hidden(text_layer_get_layer(layer_date_text), true); 
-	  } else {
-		 layer_set_hidden(text_layer_get_layer(layer_date_text), false); 
-	  }
-	  break;
-    
-	case BLUETOOTHVIBE_KEY:
-      bluetoothvibe = new_tuple->value->uint8 != 0;
-	  persist_write_bool(BLUETOOTHVIBE_KEY, bluetoothvibe);
-    break;     
-     
-	case HOURLYVIBE_KEY:
-      hourlyvibe = new_tuple->value->uint8 != 0;
-	  persist_write_bool(HOURLYVIBE_KEY, hourlyvibe);	  
-    break;
-	  
-	  
-	  case BATT_KEY:
-		showbatt = new_tuple->value->uint8  !=0;
-		persist_write_bool(BATT_KEY, showbatt);
 
-	  if (showbatt) {
-		 layer_set_hidden(text_layer_get_layer(battery_text_layer), true); 
-	  } else {
-		 layer_set_hidden(text_layer_get_layer(battery_text_layer), false); 
-	  }
-	  break;
-	  
-    case RANDOMTIME_KEY:
-      randomtime = new_tuple->value->uint8 != 0;
-	  persist_write_bool(RANDOMTIME_KEY, randomtime);	  
+  case DATE_KEY:
+	showdate = new_tuple->value->uint8 != 0;
+	persist_write_bool(DATE_KEY, showdate);
+	if (showdate) {
+	  layer_set_hidden(text_layer_get_layer(layer_date_text), true);
+	} else {
+	  layer_set_hidden(text_layer_get_layer(layer_date_text), false);
+	}
+	break;
 
-	  if (randomtime) {
-	  
-	set_random_background();
-	  
-	  }
-	  
-     break;
-  }
-}
+  case BLUETOOTHVIBE_KEY:
+	bluetoothvibe = new_tuple->value->uint8 != 0;
+	persist_write_bool(BLUETOOTHVIBE_KEY, bluetoothvibe);
+	break;
+
+  case HOURLYVIBE_KEY:
+	hourlyvibe = new_tuple->value->uint8 != 0;
+	persist_write_bool(HOURLYVIBE_KEY, hourlyvibe);
+	break;
+
+  case BATT_KEY:
+	showbatt = new_tuple->value->uint8  !=0;
+	persist_write_bool(BATT_KEY, showbatt);
+	if (showbatt) {
+	  layer_set_hidden(text_layer_get_layer(battery_text_layer), true);
+	} else {
+	  layer_set_hidden(text_layer_get_layer(battery_text_layer), false);
+	}
+	break;
+
+  case RANDOMTIME_KEY:
+	randomtime = new_tuple->value->uint8 != 0;
+	persist_write_bool(RANDOMTIME_KEY, randomtime);
+	if (randomtime) {
+	  set_random_background();
+	}
+	break;
+  } // end switch
+} // end function
 
 void update_battery_state(BatteryChargeState charge_state) {
-    static char battery_text[] = "x100";
+  static char battery_text[] = "x100";
 
-    if (charge_state.is_charging) {
-
-        snprintf(battery_text, sizeof(battery_text), "+%d", charge_state.charge_percent);
-    } else {
-        snprintf(battery_text, sizeof(battery_text), "%d", charge_state.charge_percent);
-        
-    } 
-    charge_percent = charge_state.charge_percent;
-    
-    text_layer_set_text(battery_text_layer, battery_text);
-	
-} 
+  if (charge_state.is_charging) {
+	snprintf(battery_text, sizeof(battery_text), "+%d", charge_state.charge_percent);
+  } else {
+	snprintf(battery_text, sizeof(battery_text), "%d", charge_state.charge_percent);
+  }
+  charge_percent = charge_state.charge_percent;
+  text_layer_set_text(battery_text_layer, battery_text);
+}
 
 static void toggle_bluetooth(bool connected) {
 
-if (appStarted && !connected && bluetoothvibe) {
-	  
-    //vibe!
-    vibes_long_pulse();
-   }
+  if (appStarted && !connected && bluetoothvibe) {
+    vibes_long_pulse(); //vibe!
+  }
 }
 
 void bluetooth_connection_callback(bool connected) {
@@ -136,26 +126,24 @@ void bluetooth_connection_callback(bool connected) {
 
 void update_time(struct tm *tick_time) {
 
-	static char h_time_text[] = "00";
-	static char m_time_text[] = "00";
+  static char h_time_text[] = "00";
+  static char m_time_text[] = "00";
+  static char date_text[] = "XXX XXX 00XX XXX";
 
-    static char date_text[] = "XXX XXX 00XX XXX";
-   
-    char *h_time_format;
+  char *h_time_format;
+  int new_cur_day = tick_time->tm_year*1000 + tick_time->tm_yday;
 
-    int new_cur_day = tick_time->tm_year*1000 + tick_time->tm_yday;
-    if (new_cur_day != cur_day) {
-        cur_day = new_cur_day;
+  if (new_cur_day != cur_day) {
+    cur_day = new_cur_day;
 
-	switch(tick_time->tm_mday)
-  {
-    case 1 :
-    case 21 :
-    case 31 :
-      strftime(date_text, sizeof(date_text), "%a, %est %b", tick_time);
-      break;
-    case 2 :
-    case 22 :
+	switch(tick_time->tm_mday) {
+	case 1 :
+	case 21 :
+	case 31 :
+	  strftime(date_text, sizeof(date_text), "%a, %est %b", tick_time);
+	  break;
+	case 2 :
+	case 22 :
       strftime(date_text, sizeof(date_text), "%a, %end %b", tick_time);
       break;
     case 3 :
@@ -165,139 +153,137 @@ void update_time(struct tm *tick_time) {
     default :
       strftime(date_text, sizeof(date_text), "%a, %eth %b", tick_time);
       break;
+    } // end switch
+    text_layer_set_text(layer_date_text, date_text);
+  } // end if
+  if (clock_is_24h_style()) {
+    h_time_format = "%H";
+  } else {
+    h_time_format = "%I";
   }
-	  text_layer_set_text(layer_date_text, date_text);
-}
+  strftime(h_time_text, sizeof(h_time_text), h_time_format, tick_time);
+  text_layer_set_text(layer_time_hour_text, h_time_text);
 
-   if (clock_is_24h_style()) {
-        h_time_format = "%H";		
-    } else {
-        h_time_format = "%I";
-	
-   }
-    strftime(h_time_text, sizeof(h_time_text), h_time_format, tick_time);
-    text_layer_set_text(layer_time_hour_text, h_time_text);
-
-	strftime(m_time_text, sizeof(m_time_text), "%M", tick_time);
-	text_layer_set_text(layer_time_min_text, m_time_text);
+  strftime(m_time_text, sizeof(m_time_text), "%M", tick_time);
+  text_layer_set_text(layer_time_min_text, m_time_text);
 }
 
 void hourvibe (struct tm *tick_time) {
 
-	  if(appStarted && hourlyvibe) {
-    //vibe!
-    vibes_short_pulse();
+  if(appStarted && hourlyvibe) {
+	//vibe!
+	vibes_short_pulse();
   }
 }
 
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
-    update_time(tick_time);
-	
-if (units_changed & HOUR_UNIT) {
+  update_time(tick_time);
+
+  if (units_changed & HOUR_UNIT) {
     hourvibe(tick_time);
-	set_random_background();
+    set_random_background();
+  }
+#if DEV_MODE == 1
+  if (units_changed & MINUTE_UNIT) {
+  set_random_background();  // used for testing
 }
-	
-if (units_changed & MINUTE_UNIT) { 	
-  //set_random_background();  // used for testing	
- }
+#endif
 }
 
 void force_update(void) {
-    toggle_bluetooth(bluetooth_connection_service_peek());
-    time_t now = time(NULL);
-    update_time(localtime(&now));
+  toggle_bluetooth(bluetooth_connection_service_peek());
+  time_t now = time(NULL);
+  update_time(localtime(&now));
 }
 
 
 void init_window(){
-    window = window_create();
-    window_stack_push(window, true);
-    window_layer = window_get_root_layer(window);
+  window = window_create();
+  window_stack_push(window, true);
+  window_layer = window_get_root_layer(window);
 }
 
 void handle_init(void) {
 
-	const int inbound_size = 256;
+  const int inbound_size = 256;
   const int outbound_size = 256;
-  app_message_open(inbound_size, outbound_size);  
-	
-  init_window();  
-	init_background( window_layer );
-	
-	// resources
+  app_message_open(inbound_size, outbound_size);
 
-	time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_62));
-	date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_14));
+  init_window();
+  init_background( window_layer );
 
-    // layer position and alignment
+  // resources
+
+  time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_62));
+  date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_14));
+
+  // layer position and alignment
 #ifdef PBL_PLATFORM_CHALK
-    layer_time_hour_text = text_layer_create(GRect(0, 16, 182, 64));
-	layer_time_min_text = text_layer_create(GRect(0, 73, 182, 64));
+  layer_time_hour_text = text_layer_create(GRect(0, 16, 182, 64));
+  layer_time_min_text = text_layer_create(GRect(0, 73, 182, 64));
 
-    layer_date_text = text_layer_create(GRect(0, 141, 178, 18));
-    battery_text_layer = text_layer_create(GRect(0, 11, 178, 18));	
-	
+  layer_date_text = text_layer_create(GRect(0, 141, 178, 18));
+  battery_text_layer = text_layer_create(GRect(0, 11, 178, 18));
+
 #else
-    layer_time_hour_text = text_layer_create(GRect(0, 15, 146, 64));
-	layer_time_min_text = text_layer_create(GRect(0, 72, 146, 64));
+  layer_time_hour_text = text_layer_create(GRect(0, 15, 146, 64));
+  layer_time_min_text = text_layer_create(GRect(0, 72, 146, 64));
 
-    layer_date_text = text_layer_create(GRect(22, 145, 106, 18));
-    battery_text_layer = text_layer_create(GRect(50, 5, 36, 18));	
-	
+  layer_date_text = text_layer_create(GRect(22, 145, 106, 18));
+  battery_text_layer = text_layer_create(GRect(50, 5, 36, 18));
 #endif
 
-    window_set_background_color(window, GColorWhite);
-	
-    text_layer_set_text_color(layer_time_hour_text, GColorBlack);
-	text_layer_set_text_color(layer_date_text, GColorBlack);		
-    text_layer_set_text_color(battery_text_layer, GColorBlack);
-    text_layer_set_text_color(layer_time_min_text, GColorBlack);
-	
-	text_layer_set_background_color(layer_time_hour_text, GColorClear);
-	text_layer_set_background_color(layer_date_text, GColorWhite);
-	text_layer_set_background_color(battery_text_layer, GColorWhite);
-	text_layer_set_background_color(layer_time_min_text, GColorClear);
+  window_set_background_color(window, GColorWhite);
 
-    text_layer_set_font(layer_time_hour_text, time_font);
-    text_layer_set_font(layer_date_text, date_font);
-    text_layer_set_font(battery_text_layer, date_font);
-    text_layer_set_font(layer_time_min_text, time_font);
+  text_layer_set_text_color(layer_time_hour_text, GColorBlack);
+  text_layer_set_text_color(layer_date_text, GColorBlack);
+  text_layer_set_text_color(battery_text_layer, GColorBlack);
+  text_layer_set_text_color(layer_time_min_text, GColorBlack);
 
-	text_layer_set_text_alignment(layer_time_hour_text, GTextAlignmentCenter);
-    text_layer_set_text_alignment(layer_date_text, GTextAlignmentCenter);
-    text_layer_set_text_alignment(battery_text_layer, GTextAlignmentCenter);
-	text_layer_set_text_alignment(layer_time_min_text, GTextAlignmentCenter);
+  text_layer_set_background_color(layer_time_hour_text, GColorClear);
+  text_layer_set_background_color(layer_date_text, GColorWhite);
+  text_layer_set_background_color(battery_text_layer, GColorWhite);
+  text_layer_set_background_color(layer_time_min_text, GColorClear);
 
-    // composing layers
-    layer_add_child(window_layer, text_layer_get_layer(layer_time_hour_text));
-    layer_add_child(window_layer, text_layer_get_layer(layer_date_text));
-    layer_add_child(window_layer, text_layer_get_layer(battery_text_layer));
-    layer_add_child(window_layer, text_layer_get_layer(layer_time_min_text));
+  text_layer_set_font(layer_time_hour_text, time_font);
+  text_layer_set_font(layer_date_text, date_font);
+  text_layer_set_font(battery_text_layer, date_font);
+  text_layer_set_font(layer_time_min_text, time_font);
 
-     // handlers
-    battery_state_service_subscribe(&update_battery_state);
-    bluetooth_connection_service_subscribe(&toggle_bluetooth);
-    tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
+  text_layer_set_text_alignment(layer_time_hour_text, GTextAlignmentCenter);
+  text_layer_set_text_alignment(layer_date_text, GTextAlignmentCenter);
+  text_layer_set_text_alignment(battery_text_layer, GTextAlignmentCenter);
+  text_layer_set_text_alignment(layer_time_min_text, GTextAlignmentCenter);
 
-   Tuplet initial_values[] = {
-    TupletInteger(DATE_KEY, persist_read_bool(DATE_KEY)),
+  // composing layers
+  layer_add_child(window_layer, text_layer_get_layer(layer_time_hour_text));
+  layer_add_child(window_layer, text_layer_get_layer(layer_date_text));
+  layer_add_child(window_layer, text_layer_get_layer(battery_text_layer));
+  layer_add_child(window_layer, text_layer_get_layer(layer_time_min_text));
+
+  // handlers
+  battery_state_service_subscribe(&update_battery_state);
+  bluetooth_connection_service_subscribe(&toggle_bluetooth);
+  tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
+
+  Tuplet initial_values[] = {
+	TupletInteger(DATE_KEY, persist_read_bool(DATE_KEY)),
     TupletInteger(BLUETOOTHVIBE_KEY, persist_read_bool(BLUETOOTHVIBE_KEY)),
     TupletInteger(HOURLYVIBE_KEY, persist_read_bool(HOURLYVIBE_KEY)),
     TupletInteger(BATT_KEY, persist_read_bool(BATT_KEY)),
     TupletInteger(RANDOMTIME_KEY, persist_read_bool(RANDOMTIME_KEY)),
   };
-  
-    app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
-      sync_tuple_changed_callback, NULL, NULL);
-   
-    appStarted = true;
-	
-	// update the battery on launch
-    update_battery_state(battery_state_service_peek());
-	
-    // draw first frame
-    force_update();
+
+  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
+				sync_tuple_changed_callback, NULL, NULL);
+
+  appStarted = true;
+
+  // update the battery on launch
+  update_battery_state(battery_state_service_peek());
+
+  // draw first frame
+  force_update();
 }
 
 void handle_deinit(void) {
@@ -313,16 +299,16 @@ void handle_deinit(void) {
   text_layer_destroy( layer_time_min_text );
   text_layer_destroy( layer_date_text );
   text_layer_destroy( battery_text_layer );
-	
+
   fonts_unload_custom_font(time_font);
   fonts_unload_custom_font(date_font);
-	
+
   window_destroy(window);
 
 }
 
 int main(void) {
-    handle_init();
-    app_event_loop();
-    handle_deinit();
+  handle_init();
+  app_event_loop();
+  handle_deinit();
 }
