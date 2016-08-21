@@ -1,13 +1,13 @@
 {
-    "author": "chops",
+    "author": "roxxibear",
     "dependencies": {},
     "keywords": [],
-    "name": "perlin",
+    "name": "perlin-2",
     "pebble": {
         "capabilities": [
             "configurable"
         ],
-        "displayName": "perlin",
+        "displayName": "perlin 2",
         "enableMultiJS": false,
         "messageKeys": {
             "bluetoothvibe": 1,
@@ -230,5 +230,5 @@
             "watchface": true
         }
     },
-    "version": "1.2.0"
+    "version": "2.0.0"
 }

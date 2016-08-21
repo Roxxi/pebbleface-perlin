@@ -12,24 +12,36 @@
   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
-#include "pebble.h"
+#include <pebble.h>
+#include "perlin2.h"
 #include "background.h"
+#include "resource_broker.h"
+#include "watchface_view.h"
 
 // set to 0 to for production builds
-#define DEV_MODE 1
 
 
+
+/**** Comms ****/
 
 static AppSync sync;
 static uint8_t sync_buffer[256];
+
+/**** Bootstrapping flow control ****/
+static bool appStarted = false;
+
+
+int cur_day = -1;
+
+int charge_percent = 0;
+
+/**** Settings ****/
 
 static int showdate;
 static int bluetoothvibe;
 static int hourlyvibe;
 static int showbatt;
 static int randomtime;
-
-static bool appStarted = false;
 
 enum {
   DATE_KEY = 0x0,
@@ -39,21 +51,29 @@ enum {
   RANDOMTIME_KEY = 0x4
 };
 
-Window *window;
-static Layer *window_layer;
+/**** UI ****/
 
 TextLayer *layer_date_text;
 TextLayer *layer_time_hour_text;
 TextLayer *layer_time_min_text;
-
-static GFont time_font;
-static GFont date_font;
-
-int cur_day = -1;
-
-int charge_percent = 0;
-
 TextLayer *battery_text_layer;
+
+static WatchfaceView* watchface_view;
+void init_view(){
+  watchface_view = init_watchface_view();
+  window_stack_push(watchface_view->window, true); // make the window appear on top
+  layer_date_text = watchface_view->text_layers[BOTTOM];
+  layer_time_hour_text = watchface_view->text_layers[HOUR];
+  layer_time_min_text = watchface_view->text_layers[MIN];
+  battery_text_layer = watchface_view->text_layers[TOP];
+}
+void deinit_view(){
+  deinit_watchface_view(watchface_view);
+}
+
+
+
+
 
 
 
@@ -203,11 +223,6 @@ void force_update(void) {
 }
 
 
-void init_window(){
-  window = window_create();
-  window_stack_push(window, true);
-  window_layer = window_get_root_layer(window);
-}
 
 void handle_init(void) {
 
@@ -215,57 +230,9 @@ void handle_init(void) {
   const int outbound_size = 256;
   app_message_open(inbound_size, outbound_size);
 
-  init_window();
-  init_background_layer( window_layer );
+  init_view();
 
-  // resources
 
-  time_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_62));
-  date_font = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LECO_14));
-
-  // layer position and alignment
-#ifdef PBL_PLATFORM_CHALK
-  layer_time_hour_text = text_layer_create(GRect(0, 16, 182, 64));
-  layer_time_min_text = text_layer_create(GRect(0, 73, 182, 64));
-
-  layer_date_text = text_layer_create(GRect(0, 141, 178, 18));
-  battery_text_layer = text_layer_create(GRect(0, 11, 178, 18));
-
-#else
-  layer_time_hour_text = text_layer_create(GRect(0, 15, 146, 64));
-  layer_time_min_text = text_layer_create(GRect(0, 72, 146, 64));
-
-  layer_date_text = text_layer_create(GRect(22, 145, 106, 18));
-  battery_text_layer = text_layer_create(GRect(50, 5, 36, 18));
-#endif
-
-  window_set_background_color(window, GColorWhite);
-
-  text_layer_set_text_color(layer_time_hour_text, GColorBlack);
-  text_layer_set_text_color(layer_date_text, GColorBlack);
-  text_layer_set_text_color(battery_text_layer, GColorBlack);
-  text_layer_set_text_color(layer_time_min_text, GColorBlack);
-
-  text_layer_set_background_color(layer_time_hour_text, GColorClear);
-  text_layer_set_background_color(layer_date_text, GColorWhite);
-  text_layer_set_background_color(battery_text_layer, GColorWhite);
-  text_layer_set_background_color(layer_time_min_text, GColorClear);
-
-  text_layer_set_font(layer_time_hour_text, time_font);
-  text_layer_set_font(layer_date_text, date_font);
-  text_layer_set_font(battery_text_layer, date_font);
-  text_layer_set_font(layer_time_min_text, time_font);
-
-  text_layer_set_text_alignment(layer_time_hour_text, GTextAlignmentCenter);
-  text_layer_set_text_alignment(layer_date_text, GTextAlignmentCenter);
-  text_layer_set_text_alignment(battery_text_layer, GTextAlignmentCenter);
-  text_layer_set_text_alignment(layer_time_min_text, GTextAlignmentCenter);
-
-  // composing layers
-  layer_add_child(window_layer, text_layer_get_layer(layer_time_hour_text));
-  layer_add_child(window_layer, text_layer_get_layer(layer_date_text));
-  layer_add_child(window_layer, text_layer_get_layer(battery_text_layer));
-  layer_add_child(window_layer, text_layer_get_layer(layer_time_min_text));
 
   // handlers
   battery_state_service_subscribe(&update_battery_state);
@@ -299,17 +266,7 @@ void handle_deinit(void) {
   bluetooth_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
 
-  deinit_background_layer();
-
-  text_layer_destroy( layer_time_hour_text );
-  text_layer_destroy( layer_time_min_text );
-  text_layer_destroy( layer_date_text );
-  text_layer_destroy( battery_text_layer );
-
-  fonts_unload_custom_font(time_font);
-  fonts_unload_custom_font(date_font);
-
-  window_destroy(window);
+  
 
 }
 

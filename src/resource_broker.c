@@ -28,6 +28,9 @@ static ResourceId background_image_resource_ids[RESOURCE_COUNT] = {
   RESOURCE_ID_IMAGE_BG19,
 };
 
+static const ResourceId TIME_FONT_RID = RESOURCE_ID_FONT_LECO_62;
+static const ResourceId DATE_FONT_RID = RESOURCE_ID_FONT_LECO_14;
+
 
 ResourceId choose_background_image_resource_id( int key ) {
 
@@ -46,4 +49,32 @@ GBitmap * select_random_background_image() {
 
   new_bg_image = gbitmap_create_with_resource(r_id);
   return new_bg_image;    
+}
+
+
+GFont load_font(ResourceId resource_id){
+  return fonts_load_custom_font(resource_get_handle(resource_id));
+}
+
+static GFont memo_time_font = NULL;
+GFont get_time_font(){
+  if (memo_time_font == NULL){
+    memo_time_font = load_font(TIME_FONT_RID);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Loaded Time Font");
+  }
+  return memo_time_font;
+}
+
+static GFont memo_date_font = NULL;
+GFont get_date_font(){
+  if (memo_date_font == NULL){
+    memo_date_font = load_font(DATE_FONT_RID);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Loaded Date Font");
+  }
+  return memo_date_font;
+}
+
+void deinit_fonts(){
+  fonts_unload_custom_font(memo_time_font);
+  fonts_unload_custom_font(memo_date_font);
 }
