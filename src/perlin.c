@@ -19,6 +19,7 @@
 #define DEV_MODE 1
 
 
+
 static AppSync sync;
 static uint8_t sync_buffer[256];
 
@@ -179,15 +180,20 @@ void hourvibe (struct tm *tick_time) {
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_time(tick_time);
 
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "Minute Updates");
+
   if (units_changed & HOUR_UNIT) {
     hourvibe(tick_time);
     set_random_background();
   }
 #if DEV_MODE == 1
   if (units_changed & MINUTE_UNIT) {
-  set_random_background();  // used for testing
-}
+    APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "Updating Background on the Minute");
+    set_random_background();  // used for testing
+  }
+
 #endif
+
 }
 
 void force_update(void) {
@@ -210,7 +216,7 @@ void handle_init(void) {
   app_message_open(inbound_size, outbound_size);
 
   init_window();
-  init_background( window_layer );
+  init_background_layer( window_layer );
 
   // resources
 
@@ -293,7 +299,7 @@ void handle_deinit(void) {
   bluetooth_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
 
-  deinit_background();
+  deinit_background_layer();
 
   text_layer_destroy( layer_time_hour_text );
   text_layer_destroy( layer_time_min_text );
