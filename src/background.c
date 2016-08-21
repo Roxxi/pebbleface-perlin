@@ -47,55 +47,55 @@ GBitmap * select_random_background_image() {
   return new_bg_image;    
 }
 
-bool is_background_image_set(BackgroundLayer* bg){
-  return bg->image != NULL;
+bool is_background_image_set(WatchFaceBackground* wfb){
+  return wfb->image != NULL;
 }
 
-void dealloc_background_image(BackgroundLayer* bg){
-  if (is_background_image_set(bg)) {
-    gbitmap_destroy(bg->image);
-  	bg->image = NULL;
+void dealloc_background_image(WatchFaceBackground* wfb){
+  if (is_background_image_set(wfb)) {
+    gbitmap_destroy(wfb->image);
+  	wfb->image = NULL;
   }
 }
 
-void update_background_image(BackgroundLayer* bg, GBitmap* bg_image){
-  dealloc_background_image(bg);
-  bg->image = bg_image;
+void update_background_image(WatchFaceBackground* wfb, GBitmap* bg_image){
+  dealloc_background_image(wfb);
+  wfb->image = bg_image;
 }
 
 
 
-void dealloc_background_layer(BackgroundLayer* bg) {
-  layer_remove_from_parent(bitmap_layer_get_layer(bg->layer));
-  bitmap_layer_destroy(bg->layer);
+void dealloc_background_layer(WatchFaceBackground* wfb) {
+  layer_remove_from_parent(bitmap_layer_get_layer(wfb->layer));
+  bitmap_layer_destroy(wfb->layer);
 }
 
-void update_layer_background(BackgroundLayer* bg, GBitmap * bg_image){
+void update_layer_background(WatchFaceBackground* wfb, GBitmap * bg_image){
   if (bg_image != NULL) {
-    update_background_image(bg, bg_image);
-    bitmap_layer_set_bitmap(bg->layer, bg->image);
-		layer_set_hidden(bitmap_layer_get_layer(bg->layer), false);
-		layer_mark_dirty(bitmap_layer_get_layer(bg->layer));
+    update_background_image(wfb, bg_image);
+    bitmap_layer_set_bitmap(wfb->layer, wfb->image);
+		layer_set_hidden(bitmap_layer_get_layer(wfb->layer), false);
+		layer_mark_dirty(bitmap_layer_get_layer(wfb->layer));
   }
 }
 
 
 /************ BG Layer Singleton **************/
-static BackgroundLayer* theBackgroundLayer;
+static WatchFaceBackground* theWatchFaceBackground;
 
-BackgroundLayer* get_background_layer(){
-  return theBackgroundLayer;
+WatchFaceBackground* get_watchfacebackground(){
+  return theWatchFaceBackground;
 }
 
-BackgroundLayer* set_background_layer(BackgroundLayer* bg){
-  theBackgroundLayer = bg;
-  return theBackgroundLayer;
+WatchFaceBackground* set_watchfacebackground(WatchFaceBackground* wfb){
+  theWatchFaceBackground = wfb;
+  return theWatchFaceBackground;
 }
 
 void dealloc_the_background_layer(){
-  dealloc_background_layer(theBackgroundLayer);
-  dealloc_background_image(theBackgroundLayer);
-  free(theBackgroundLayer);
+  dealloc_background_layer(theWatchFaceBackground);
+  dealloc_background_image(theWatchFaceBackground);
+  free(theWatchFaceBackground);
 }
 
 
@@ -104,24 +104,24 @@ void dealloc_the_background_layer(){
 void set_random_background() {	
     
   GBitmap* bg_image;
-  BackgroundLayer* bg = get_background_layer();
+  WatchFaceBackground* wfb = get_watchfacebackground();
 
   // clean up previous image
-  dealloc_background_image(bg);
+  dealloc_background_image(wfb);
 
   // select new image
   bg_image = select_random_background_image();
-  update_layer_background(bg, bg_image);
+  update_layer_background(wfb, bg_image);
 }
 
 void init_background_layer( Layer * parent_layer ){
   
-  BackgroundLayer* bg = malloc(sizeof(BackgroundLayer));
-  set_background_layer(bg);
-  bg->image = select_random_background_image();
-  bg->layer = bitmap_layer_create( layer_get_frame( parent_layer ) );
-  bitmap_layer_set_bitmap( bg->layer, bg->image );
-  layer_add_child( parent_layer, bitmap_layer_get_layer( bg->layer ) );
+  WatchFaceBackground* wfb = malloc(sizeof(WatchFaceBackground));
+  set_watchfacebackground(wfb);
+  wfb->image = select_random_background_image();
+  wfb->layer = bitmap_layer_create( layer_get_frame( parent_layer ) );
+  bitmap_layer_set_bitmap( wfb->layer, wfb->image );
+  layer_add_child( parent_layer, bitmap_layer_get_layer( wfb->layer ) );
 }
 
 void deinit_background_layer(){
