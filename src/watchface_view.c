@@ -84,8 +84,15 @@ WatchfaceView* init_window(WatchfaceView* wfv){
   wfv->window = window_create();
   wfv->window_layer = window_get_root_layer(wfv->window);
   window_set_background_color(wfv->window, GColorWhite);
+  wfv->background = init_background(wfv->window_layer);
   return wfv;
 }
+
+void deinit_window(WatchfaceView* wfv){
+  window_destroy(wfv->window);
+  deinit_background(wfv->background);
+}
+
 
 WatchfaceView* init_text_layers(WatchfaceView* wfv){
   TextLayerConfig tlc;
@@ -101,7 +108,15 @@ WatchfaceView* init_text_layers(WatchfaceView* wfv){
   return wfv;
 }
 
+void deinit_text_layers(WatchfaceView* wfv){
+  for(int i = 0; i < NUM_TEXT_LAYERS; i++) {
+    text_layer_destroy(wfv->text_layers[i]);
+  }  
+}
+
 void attach_layers(WatchfaceView * wfv){
+  layer_add_child( wfv->window_layer, 
+                   bitmap_layer_get_layer( wfv->background->layer ) );
   layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[TOP]) );
   layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[MIN]) );
   layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[HOUR]) );
@@ -115,18 +130,21 @@ WatchfaceView* init_watchface_view() {
 
   wfv = malloc(sizeof(WatchfaceView));
   init_window(wfv);
-  init_background_layer( wfv->window_layer );
   init_text_layers(wfv); 
   attach_layers(wfv);
       
   return wfv;
 }
 
+
+
 void deinit_watchface_view(WatchfaceView* wfv){
-  deinit_background_layer();
+  deinit_text_layers(wfv);
+  deinit_window(wfv);
   deinit_fonts();
-  for(int i = 0; i < NUM_TEXT_LAYERS; i++) {
-    text_layer_destroy(wfv->text_layers[i]);
-  }  
   free(wfv);
+}
+
+void random_background(WatchfaceView* wfv){
+  set_random_background(wfv->background);
 }

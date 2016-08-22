@@ -2,7 +2,11 @@
 
 #include <pebble.h>
 
+typedef struct {
+  BitmapLayer * layer;
+  GBitmap * image;
+} WatchfaceBackground;
 
-void set_random_background();
-void init_background_layer( Layer * window_layer );
-void deinit_background_layer( );
+void set_random_background(WatchfaceBackground*);
+WatchfaceBackground* init_background(Layer*);
+void deinit_background(WatchfaceBackground*);

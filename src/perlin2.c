@@ -1,6 +1,5 @@
 #include <pebble.h>
 #include "perlin2.h"
-#include "background.h"
 #include "resource_broker.h"
 #include "watchface_view.h"
 
@@ -56,8 +55,6 @@ void deinit_view(){
 }
 
 
-
-
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   switch (key) {
 
@@ -95,7 +92,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 	randomtime = new_tuple->value->uint8 != 0;
 	persist_write_bool(RANDOMTIME_KEY, randomtime);
 	if (randomtime) {
-	  set_random_background();
+	  random_background(watchface_view);
 	}
 	break;
   } // end switch
@@ -178,15 +175,15 @@ void hourvibe (struct tm *tick_time) {
 
 void log_mem_stats(){
   size_t used, free, total;
-  float pct;
+  //float pct;
   free = heap_bytes_free();
   used = heap_bytes_used();
   total = used + free;
-  pct = used / total * 100.0;
+  //pct = used / total * 100.0;
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_free: %zu", free);
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_used: %zu", used );
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "total_heap: %zu", total);
-  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %f", pct);
+  //APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %f", pct);
 }
 
 
@@ -197,13 +194,13 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 
   if (units_changed & HOUR_UNIT) {
     hourvibe(tick_time);
-    set_random_background();
+    random_background(watchface_view);
   }
 #if DEV_MODE == 1
   if (units_changed & MINUTE_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "Updating Background on the Minute");
     log_mem_stats();
-    set_random_background();  // used for testing
+    random_background(watchface_view);  // used for testing
     log_mem_stats();
   }
 
@@ -226,8 +223,6 @@ void handle_init(void) {
   app_message_open(inbound_size, outbound_size);
 
   init_view();
-
-
 
   // handlers
   battery_state_service_subscribe(&update_battery_state);
@@ -256,13 +251,10 @@ void handle_init(void) {
 
 void handle_deinit(void) {
   app_sync_deinit(&sync);
-
+  deinit_view();
   tick_timer_service_unsubscribe();
   bluetooth_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
-
-  
-
 }
 
 int main(void) {
