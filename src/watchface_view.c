@@ -101,6 +101,13 @@ WatchfaceView* init_text_layers(WatchfaceView* wfv){
   return wfv;
 }
 
+void attach_layers(WatchfaceView * wfv){
+  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[TOP]) );
+  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[MIN]) );
+  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[HOUR]) );
+  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[BOTTOM]) );
+}
+
 
 WatchfaceView* init_watchface_view() {
 
@@ -110,11 +117,7 @@ WatchfaceView* init_watchface_view() {
   init_window(wfv);
   init_background_layer( wfv->window_layer );
   init_text_layers(wfv); 
-  // composing layers
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[TOP]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[MIN]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[HOUR]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[BOTTOM]) );
+  attach_layers(wfv);
       
   return wfv;
 }
