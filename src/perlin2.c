@@ -176,6 +176,20 @@ void hourvibe (struct tm *tick_time) {
   }
 }
 
+void log_mem_stats(){
+  size_t used, free, total;
+  float pct;
+  free = heap_bytes_free();
+  used = heap_bytes_used();
+  total = used + free;
+  pct = used / total * 100.0;
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_free: %zu", free);
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_used: %zu", used );
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "total_heap: %zu", total);
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %f", pct);
+}
+
+
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_time(tick_time);
 
@@ -188,7 +202,9 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 #if DEV_MODE == 1
   if (units_changed & MINUTE_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "Updating Background on the Minute");
+    log_mem_stats();
     set_random_background();  // used for testing
+    log_mem_stats();
   }
 
 #endif

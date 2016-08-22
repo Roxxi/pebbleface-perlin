@@ -69,8 +69,8 @@ void set_random_background() {
   WatchFaceBackground* wfb;
 
   wfb = get_watchfacebackground();
-  // clean up previous image
-  
+  // clean up previous image - first to free space for the read
+  dealloc_wfb_image(wfb);
   // select new image
   bg_image = select_random_background_image();
   // redraw with new background
