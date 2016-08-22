@@ -6,9 +6,9 @@
 
 
 #if DEV_MODE
-  static const int TEXT_LAYERS=5;
+  #define NUM_TEXT_LAYERS 4
 #else
-  static const int TEXT_LAYERS=4;
+  #define NUM_TEXT_LAYERS 4
 #endif
 
 typedef struct {
@@ -20,28 +20,36 @@ typedef struct {
   GTextAlignment text_alignment;
 } TextLayerConfig ;
 
-#ifdef PBL_PLATFORM_CHALK
-static TextLayerConfig text_layer_configs[TEXT_LAYERS] = {
-  { TOP,    GRect(0, 11, 178, 18),  GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { HOUR,   GRect(0, 16, 182, 64),  GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { MIN,    GRect(0, 73, 182, 64),  GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { BOTTOM, GRect(0, 141, 178, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter }
-  #if DEV_MODE
-    , // TODO Add Layer for DEV, don't get rid of comma
-  #endif
-};
-#else
-static TextLayerConfig text_layer_configs[TEXT_LAYERS] = {
-  { TOP,    GRect(50, 5, 36, 18),    GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { HOUR,   GRect(0, 15, 146, 64),   GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { MIN,    GRect(0, 72, 146, 64),   GColorBlack, GColorWhite, NULL, GTextAlignmentCenter },
-  { BOTTOM, GRect(22, 145, 106, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter }
-  #if DEV_MODE
-    , // TODO Add Layer for DEV, don't get rid of comma
-  #endif
-};
-#endif  
+// TODO make this suck less...
+static TextLayerConfig text_layer_configs[NUM_TEXT_LAYERS];
 
+void init_text_layer_configs(){
+  #ifdef PBL_PLATFORM_CHALK // Pebble Time Round
+    text_layer_configs[TOP] = 
+      (TextLayerConfig) { TOP,    GRect(0, 11, 178, 18),  GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    text_layer_configs[HOUR] = 
+      (TextLayerConfig) { HOUR,   GRect(0, 16, 182, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
+    text_layer_configs[MIN] = 
+      (TextLayerConfig) { MIN,    GRect(0, 73, 182, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
+    text_layer_configs[BOTTOM] = 
+      (TextLayerConfig) { BOTTOM, GRect(0, 141, 178, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    #if DEV_MODE
+      // TODO implement dev indicator
+    #endif
+  #else // Pebble Time 
+    text_layer_configs[TOP] = 
+      (TextLayerConfig) { TOP,    GRect(50, 5, 36, 18),    GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    text_layer_configs[HOUR] = 
+      (TextLayerConfig) { HOUR,   GRect(0, 15, 146, 64),   GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
+    text_layer_configs[MIN] = 
+      (TextLayerConfig)  { MIN,    GRect(0, 72, 146, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
+    text_layer_configs[BOTTOM] = 
+      (TextLayerConfig) { BOTTOM, GRect(22, 145, 106, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    #if DEV_MODE
+      // TODO implement dev indicator
+    #endif
+  #endif
+}
 
 GFont get_font_for_section (TextLayerId id){
   if (id == TOP || id == BOTTOM || id == DEV){
@@ -83,8 +91,9 @@ WatchfaceView* init_text_layers(WatchfaceView* wfv){
   TextLayerConfig tlc;
   TextLayerId id;
 
-  wfv->text_layers = malloc(TEXT_LAYERS * sizeof(TextLayer*));
-  for(int i = 0; i < TEXT_LAYERS; i++) {
+  init_text_layer_configs(); //TODO Ugh... so crappy.
+  wfv->text_layers = malloc(NUM_TEXT_LAYERS * sizeof( TextLayer* ) );
+  for(int i = 0; i < NUM_TEXT_LAYERS; i++) {
     tlc = text_layer_configs[i];
     id = tlc.id;
     wfv->text_layers[id] = create_text_layer(tlc);
@@ -113,7 +122,7 @@ WatchfaceView* init_watchface_view() {
 void deinit_watchface_view(WatchfaceView* wfv){
   deinit_background_layer();
   deinit_fonts();
-  for(int i = 0; i < TEXT_LAYERS; i++) {
+  for(int i = 0; i < NUM_TEXT_LAYERS; i++) {
     text_layer_destroy(wfv->text_layers[i]);
   }  
   free(wfv);

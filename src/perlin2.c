@@ -29,10 +29,7 @@ static uint8_t sync_buffer[256];
 
 /**** Bootstrapping flow control ****/
 static bool appStarted = false;
-
-
 int cur_day = -1;
-
 int charge_percent = 0;
 
 /**** Settings ****/
@@ -62,19 +59,23 @@ static WatchfaceView* watchface_view;
 void init_view(){
   watchface_view = init_watchface_view();
   window_stack_push(watchface_view->window, true); // make the window appear on top
+  APP_LOG(APP_LOG_LEVEL_INFO, "made it here!");
   layer_date_text = watchface_view->text_layers[BOTTOM];
+  APP_LOG(APP_LOG_LEVEL_INFO, "made it here!");
+
   layer_time_hour_text = watchface_view->text_layers[HOUR];
+  APP_LOG(APP_LOG_LEVEL_INFO, "made it here!");
+
   layer_time_min_text = watchface_view->text_layers[MIN];
+  APP_LOG(APP_LOG_LEVEL_INFO, "made it here!");
+
   battery_text_layer = watchface_view->text_layers[TOP];
+  APP_LOG(APP_LOG_LEVEL_INFO, "made it here!");
+
 }
 void deinit_view(){
   deinit_watchface_view(watchface_view);
 }
-
-
-
-
-
 
 
 
