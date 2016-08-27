@@ -6,7 +6,7 @@
 
 
 #if DEV_MODE
-  #define NUM_TEXT_LAYERS 4
+  #define NUM_TEXT_LAYERS 5
 #else
   #define NUM_TEXT_LAYERS 4
 #endif
@@ -20,19 +20,15 @@ typedef struct {
   GTextAlignment text_alignment;
 } TextLayerConfig ;
 
-
-
-
-
 TextLayerConfig*  init_text_layer_configs(){
   TextLayerConfig*  tlcs = malloc(sizeof(TextLayerConfig) * NUM_TEXT_LAYERS);
   #ifdef PBL_PLATFORM_CHALK // Pebble Time Round
-    tlcs[0] = (TextLayerConfig) { TOP,    GRect(0, 11, 178, 18),  GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
+    tlcs[0] = (TextLayerConfig) { TOP,    GRect(70, 5, 36, 18),   GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
     tlcs[1] = (TextLayerConfig) { HOUR,   GRect(0, 16, 182, 64),  GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
     tlcs[2] = (TextLayerConfig) { MIN,    GRect(0, 73, 182, 64),  GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
     tlcs[3] = (TextLayerConfig) { BOTTOM, GRect(0, 141, 178, 18), GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
     #if DEV_MODE
-      //, TODO implement dev indicator
+      tlcs[4] = (TextLayerConfig) { DEV,  GRect(20, 30, 30, 18),  GColorDarkCandyAppleRed, GColorWhite, get_date_font(), GTextAlignmentLeft };
     #endif
   #else // Pebble Time 
     tlcs[0] = (TextLayerConfig) { TOP,    GRect(50, 5, 36, 18),    GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
@@ -40,12 +36,11 @@ TextLayerConfig*  init_text_layer_configs(){
     tlcs[2] =(TextLayerConfig)  { MIN,    GRect(0, 72, 146, 64),   GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
     tlcs[3] =(TextLayerConfig)  { BOTTOM, GRect(22, 145, 106, 18), GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
     #if DEV_MODE
-      //, TODO implement dev indicator
+      tlcs[4] = (TextLayerConfig) { DEV,  GRect(0, 11, 30, 18),  GColorDarkCandyAppleRed, GColorWhite, get_date_font(), GTextAlignmentLeft };
     #endif
   #endif
   return tlcs;
 }
-
 
 TextLayer* create_text_layer(TextLayerConfig tlc) {
   TextLayer* layer; 
@@ -71,7 +66,6 @@ void deinit_window(WatchfaceView* wfv){
   deinit_background(wfv->background);
 }
 
-
 WatchfaceView* init_text_layers(WatchfaceView* wfv){
   TextLayerConfig tlc;
   TextLayerConfig *text_layer_configs;
@@ -96,26 +90,20 @@ void deinit_text_layers(WatchfaceView* wfv){
 void attach_layers(WatchfaceView * wfv){
   layer_add_child( wfv->window_layer, 
                    bitmap_layer_get_layer( wfv->background->layer ) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[TOP]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[MIN]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[HOUR]) );
-  layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[BOTTOM]) );
+  for(int i = 0; i < NUM_TEXT_LAYERS; i++){
+    layer_add_child(wfv->window_layer, text_layer_get_layer(wfv->text_layers[i]) );
+  }
 }
 
-
 WatchfaceView* init_watchface_view() {
-
   WatchfaceView* wfv;
 
   wfv = malloc(sizeof(WatchfaceView));
   init_window(wfv);
   init_text_layers(wfv); 
   attach_layers(wfv);
-      
   return wfv;
 }
-
-
 
 void deinit_watchface_view(WatchfaceView* wfv){
   deinit_text_layers(wfv);

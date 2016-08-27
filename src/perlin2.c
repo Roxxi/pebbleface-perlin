@@ -39,6 +39,9 @@ TextLayer *layer_date_text;
 TextLayer *layer_time_hour_text;
 TextLayer *layer_time_min_text;
 TextLayer *battery_text_layer;
+#ifdef DEV_MODE
+TextLayer *layer_dev_text;
+#endif
 
 static WatchfaceView* watchface_view;
 void init_view(){
@@ -48,7 +51,9 @@ void init_view(){
   layer_time_hour_text = watchface_view->text_layers[HOUR];
   layer_time_min_text = watchface_view->text_layers[MIN];
   battery_text_layer = watchface_view->text_layers[TOP];
-
+  #ifdef DEV_MODE
+  layer_dev_text = watchface_view->text_layers[DEV];
+  #endif
 }
 void deinit_view(){
   deinit_watchface_view(watchface_view);
@@ -203,6 +208,7 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
     random_background(watchface_view);  // used for testing
     log_mem_stats();
   }
+  text_layer_set_text(layer_dev_text, "DEV");
 
 #endif
 
