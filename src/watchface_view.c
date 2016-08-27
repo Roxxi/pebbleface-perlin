@@ -20,63 +20,41 @@ typedef struct {
   GTextAlignment text_alignment;
 } TextLayerConfig ;
 
-// TODO make this suck less...
-static TextLayerConfig text_layer_configs[NUM_TEXT_LAYERS];
 
-void init_text_layer_configs(){
+
+
+
+TextLayerConfig*  init_text_layer_configs(){
+  TextLayerConfig*  tlcs = malloc(sizeof(TextLayerConfig) * NUM_TEXT_LAYERS);
   #ifdef PBL_PLATFORM_CHALK // Pebble Time Round
-    text_layer_configs[TOP] = 
-      (TextLayerConfig) { TOP,    GRect(0, 11, 178, 18),  GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
-    text_layer_configs[HOUR] = 
-      (TextLayerConfig) { HOUR,   GRect(0, 16, 182, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
-    text_layer_configs[MIN] = 
-      (TextLayerConfig) { MIN,    GRect(0, 73, 182, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
-    text_layer_configs[BOTTOM] = 
-      (TextLayerConfig) { BOTTOM, GRect(0, 141, 178, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    tlcs[0] = (TextLayerConfig) { TOP,    GRect(0, 11, 178, 18),  GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
+    tlcs[1] = (TextLayerConfig) { HOUR,   GRect(0, 16, 182, 64),  GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
+    tlcs[2] = (TextLayerConfig) { MIN,    GRect(0, 73, 182, 64),  GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
+    tlcs[3] = (TextLayerConfig) { BOTTOM, GRect(0, 141, 178, 18), GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
     #if DEV_MODE
-      // TODO implement dev indicator
+      //, TODO implement dev indicator
     #endif
   #else // Pebble Time 
-    text_layer_configs[TOP] = 
-      (TextLayerConfig) { TOP,    GRect(50, 5, 36, 18),    GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
-    text_layer_configs[HOUR] = 
-      (TextLayerConfig) { HOUR,   GRect(0, 15, 146, 64),   GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
-    text_layer_configs[MIN] = 
-      (TextLayerConfig)  { MIN,    GRect(0, 72, 146, 64),  GColorBlack, GColorClear, NULL, GTextAlignmentCenter };
-    text_layer_configs[BOTTOM] = 
-      (TextLayerConfig) { BOTTOM, GRect(22, 145, 106, 18), GColorBlack, GColorWhite, NULL, GTextAlignmentCenter };
+    tlcs[0] = (TextLayerConfig) { TOP,    GRect(50, 5, 36, 18),    GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
+    tlcs[1] =(TextLayerConfig)  { HOUR,   GRect(0, 15, 146, 64),   GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
+    tlcs[2] =(TextLayerConfig)  { MIN,    GRect(0, 72, 146, 64),   GColorBlack, GColorClear, get_time_font(), GTextAlignmentCenter };
+    tlcs[3] =(TextLayerConfig)  { BOTTOM, GRect(22, 145, 106, 18), GColorBlack, GColorWhite, get_date_font(), GTextAlignmentCenter };
     #if DEV_MODE
-      // TODO implement dev indicator
+      //, TODO implement dev indicator
     #endif
   #endif
+  return tlcs;
 }
 
-GFont get_font_for_section (TextLayerId id){
-  if (id == TOP || id == BOTTOM || id == DEV){
-    return get_date_font();
-  } else if (id == HOUR || id == MIN) {
-    return get_time_font();
-  } else {
-    APP_LOG(APP_LOG_LEVEL_ERROR, "Did not find font for section %d", id);
-    return fonts_get_system_font(FONT_KEY_GOTHIC_09);
-  }
-}
 
 TextLayer* create_text_layer(TextLayerConfig tlc) {
   TextLayer* layer; 
-  GFont custom_font;
 
   layer = text_layer_create(tlc.text_area);
   text_layer_set_text_color(layer, tlc.text_color);
   text_layer_set_background_color(layer, tlc.background_color);
   text_layer_set_text_alignment(layer, tlc.text_alignment);
-  // We're providing our own fonts, so we need to dynamic load
-  if (tlc.text_font == NULL) {
-    custom_font = get_font_for_section(tlc.id);
-    text_layer_set_font(layer, custom_font);
-  } else {
-    text_layer_set_font(layer, tlc.text_font);
-  }
+  text_layer_set_font(layer, tlc.text_font);
   return layer;
 }
 
@@ -96,9 +74,10 @@ void deinit_window(WatchfaceView* wfv){
 
 WatchfaceView* init_text_layers(WatchfaceView* wfv){
   TextLayerConfig tlc;
+  TextLayerConfig *text_layer_configs;
   TextLayerId id;
 
-  init_text_layer_configs(); //TODO Ugh... so crappy.
+  text_layer_configs = init_text_layer_configs();
   wfv->text_layers = malloc(NUM_TEXT_LAYERS * sizeof( TextLayer* ) );
   for(int i = 0; i < NUM_TEXT_LAYERS; i++) {
     tlc = text_layer_configs[i];

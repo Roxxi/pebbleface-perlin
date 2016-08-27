@@ -175,15 +175,15 @@ void hourvibe (struct tm *tick_time) {
 
 void log_mem_stats(){
   size_t used, free, total;
-  //float pct;
+  size_t pct;
   free = heap_bytes_free();
   used = heap_bytes_used();
   total = used + free;
-  //pct = used / total * 100.0;
+  pct = used * 100 / total;
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_free: %zu", free);
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "heap_bytes_used: %zu", used );
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "total_heap: %zu", total);
-  //APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %f", pct);
+  APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %zu", pct);
 }
 
 
