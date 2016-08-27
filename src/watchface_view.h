@@ -15,5 +15,16 @@ typedef struct {
 
 WatchfaceView* init_watchface_view();
 void deinit_watchface_view(WatchfaceView*);
-void random_background(WatchfaceView*);
+
+WatchfaceView* random_background(WatchfaceView*);
+
+WatchfaceView* date_text_show(WatchfaceView*);
+WatchfaceView* date_text_hide(WatchfaceView*);
+
+WatchfaceView* battery_text_show(WatchfaceView*);
+WatchfaceView* battery_text_hide(WatchfaceView*);
+
+
+
+
 

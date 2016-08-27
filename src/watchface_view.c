@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "perlin2.h"
+#include "perlin.h"
 #include "watchface_view.h"
 #include "background.h"
 #include "resource_broker.h"
@@ -112,6 +112,38 @@ void deinit_watchface_view(WatchfaceView* wfv){
   free(wfv);
 }
 
-void random_background(WatchfaceView* wfv){
+WatchfaceView* random_background(WatchfaceView* wfv) {
+  APP_LOG(APP_LOG_LEVEL_INFO, "Swapping Background");
   set_random_background(wfv->background);
+  return wfv;
 }
+
+WatchfaceView* date_text_show(WatchfaceView* wfv){
+  APP_LOG(APP_LOG_LEVEL_INFO, "Showing Date");
+  layer_set_hidden(text_layer_get_layer(wfv->text_layers[BOTTOM]), false);
+  return wfv;
+}
+
+WatchfaceView* date_text_hide(WatchfaceView* wfv){
+  APP_LOG(APP_LOG_LEVEL_INFO, "Hiding Date"); 
+  layer_set_hidden(text_layer_get_layer(wfv->text_layers[BOTTOM]), true);
+  return wfv;
+}
+
+WatchfaceView* battery_text_show(WatchfaceView* wfv){
+  APP_LOG(APP_LOG_LEVEL_INFO, "Showing Battery"); 
+  layer_set_hidden(text_layer_get_layer(wfv->text_layers[TOP]), false);
+  return wfv;
+}
+
+WatchfaceView* battery_text_hide(WatchfaceView* wfv){
+  APP_LOG(APP_LOG_LEVEL_INFO, "Hiding Battery"); 
+  layer_set_hidden(text_layer_get_layer(wfv->text_layers[TOP]), true);
+  return wfv;
+}
+
+
+
+
+
+
