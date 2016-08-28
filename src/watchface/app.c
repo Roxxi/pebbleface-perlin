@@ -18,8 +18,6 @@ WatchfaceApp* init_watchface_app(){
   app->sync_buffer = malloc(sizeof(uint8_t) * SYNC_BUFFER_SIZE);
   app->state = init_watchface_state();
   app->view = init_watchface_view();
-  settings_reload_view(app);
-  // TODO move elsewhre
   app_sync_init(&(app->sync), app->sync_buffer, SYNC_BUFFER_SIZE, NULL, 0,	NULL, NULL, app);
   app_message_register_inbox_received(prv_inbox_received_handler);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
@@ -45,7 +43,6 @@ void deinit_watchface_app(WatchfaceApp* app){
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Deallocation");
 
 }
-
 
 void settings_reload_view(WatchfaceApp* app){
   app->state->showbatt ? battery_text_show(app->view) : battery_text_hide(app->view);

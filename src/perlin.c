@@ -96,8 +96,6 @@ void hourvibe (struct tm *tick_time) {
   }
 }
 
-
-
 void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
   update_time(tick_time);
 
@@ -138,6 +136,7 @@ void handle_init(void) {
   update_battery_state(battery_state_service_peek());
 
   // draw first frame
+  settings_reload_view(app);
   force_update();
 }
 
