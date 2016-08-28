@@ -46,6 +46,9 @@ void state_update_charge_percernt(WatchfaceState* state, int charge_percernt);
 void state_load_settings(WatchfaceState* state);
 void state_persist_settings(WatchfaceState* state);
 
+// Debugging
+void log_state(WatchfaceState* state);
+
 
 
 

@@ -119,9 +119,14 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 void force_update(void) {
+   // update the battery on launch
+  update_battery_state(battery_state_service_peek());
   toggle_bluetooth(bluetooth_connection_service_peek());
   time_t now = time(NULL);
   update_time(localtime(&now));
+  settings_reload_view(app);
+  window_stack_push(app->view->window, true); 
+
 }
 
 void handle_init(void) {
@@ -132,12 +137,7 @@ void handle_init(void) {
   bluetooth_connection_service_subscribe(&toggle_bluetooth);
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   
-  // update the battery on launch
-  update_battery_state(battery_state_service_peek());
-
-  // draw first frame
-  settings_reload_view(app);
-  window_stack_push(app->view->window, true); // make the window appear on top
+  
   force_update();
 }
 

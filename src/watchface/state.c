@@ -1,7 +1,6 @@
 #include <pebble.h>
 #include "perlin.h"
 #include "watchface/state.h"
-#include "settings.h"
 
 /*** Macro Notes
  * 
@@ -80,6 +79,16 @@ void state_persist_settings(WatchfaceState* state){
   persist_write_property(random_background);
 }
 
+void log_state(WatchfaceState* state){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "bluetooth_vibe :%d", state_read_bluetooth_vibe(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "hourlyvibe :%d", state_read_hourly_vibe(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "randomwallpaper :%d", state_read_random_background(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "showdate :%d", state_read_show_date(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "showbatt :%d", state_read_show_battery(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "cur_day :%d", state_read_current_day(state));
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "charge_percent :%d", state_read_charge_percent(state));
+}
+
 WatchfaceState* init_watchface_state(){
   WatchfaceState* state = malloc(sizeof(WatchfaceState));
 
@@ -87,15 +96,8 @@ WatchfaceState* init_watchface_state(){
   state_update_current_day(state, -1);
   state_update_charge_percent(state, 0);
   
-  APP_LOG(APP_LOG_LEVEL_DEBUG, 
-          "{ 'bluetoothview':%d, 'hourlyvibe':%d, 'randomwallpaper':%d, 'showdate':%d, 'showbatt':%d, 'cur_day':%d, 'charge_percent': %d }",
-          state_read_bluetooth_vibe(state),
-          state_read_hourly_vibe(state), 
-          state_read_random_background(state),
-          state_read_show_date(state),
-          state_read_show_battery(state),
-          state_read_current_day(state),
-          state_read_charge_percent(state));
+  log_state(state);
+
   return state;
 }
 
