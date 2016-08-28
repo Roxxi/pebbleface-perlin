@@ -102,9 +102,10 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 void force_update(void) {
-   // update the battery on launch
-  battery_charge_state_callback(battery_state_service_peek());
-  service_connection_service_update_state();
+
+  // update on launch
+  service_connection_service_update();
+  service_battery_state_service_update();
   time_t now = time(NULL);
   update_time(localtime(&now));
   settings_reload_view(app);
@@ -116,7 +117,7 @@ void handle_init(void) {
 
   app=init_watchface_app();
   // handlers
-  battery_state_service_subscribe(&battery_charge_state_callback);
+  service_battery_state_service_subscribe();
   service_connection_service_subscribe();
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   
@@ -129,7 +130,7 @@ void handle_deinit(void) {
   deinit_watchface_app(app);
   tick_timer_service_unsubscribe();
   service_connection_service_unsubscribe();
-  battery_state_service_unsubscribe();
+  service_battery_state_service_unsubscribe();
 }
 
 int main(void) {

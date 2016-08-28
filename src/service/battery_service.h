@@ -1,3 +1,5 @@
-#include <pebble.h>
 
-void battery_charge_state_callback(BatteryChargeState charge_state);
+
+void service_battery_state_service_subscribe();
+void service_battery_state_service_unsubscribe();
+void service_battery_state_service_update();

@@ -26,7 +26,7 @@ void service_connection_service_unsubscribe() {
   connection_service_unsubscribe();
 }
 
-void service_connection_service_update_state() {
+void service_connection_service_update() {
   bool app_connection = connection_service_peek_pebble_app_connection();
   bool kit_connection = connection_service_peek_pebblekit_connection();
 
