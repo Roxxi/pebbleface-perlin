@@ -44,9 +44,22 @@ void deinit_watchface_app(WatchfaceApp* app){
 }
 
 void settings_reload_view(WatchfaceApp* app){
-  app->state->showbatt ? battery_text_show(app->view) : battery_text_hide(app->view);
-  app->state->showdate ? date_text_show(app->view) : date_text_hide(app->view);
-  if(app->state->randomwallpaper) random_background(app->view);
+
+  if (state_read_show_battery(app->state)) {
+    battery_text_show(app->view);
+  } else { 
+    battery_text_hide(app->view);
+  }
+  
+  if (state_read_show_date(app->state)) {
+    date_text_show(app->view);
+  } else {
+    date_text_hide(app->view);
+  }
+ 
+   if (state_read_random_background(app->state)) {
+     random_background(app->view);
+   }
 }
 
 

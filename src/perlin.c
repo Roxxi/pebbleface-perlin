@@ -36,7 +36,7 @@ void update_battery_state(BatteryChargeState charge_state) {
 
 static void toggle_bluetooth(bool connected) {
 
-  if (!connected && app->state->bluetoothvibe) {
+  if (!connected && state_read_bluetooth_vibe(app->state)) {
     vibes_long_pulse(); //vibe!
   }
 }
@@ -54,8 +54,8 @@ void update_time(struct tm *tick_time) {
   char *h_time_format;
   int new_cur_day = tick_time->tm_year*1000 + tick_time->tm_yday;
 
-  if (new_cur_day != app->state->cur_day) {
-    app->state->cur_day = new_cur_day;
+  if (new_cur_day != state_read_current_day(app->state)) {
+    state_update_current_day(app->state, new_cur_day);
 	  switch(tick_time->tm_mday) {
   	  case 1 :
   	  case 21 :
@@ -90,7 +90,7 @@ void update_time(struct tm *tick_time) {
 
 void hourvibe (struct tm *tick_time) {
 
-  if(app->state->hourlyvibe) {
+  if(state_read_hourly_vibe(app->state)) {
 	  //vibe!
 	  vibes_short_pulse();
   }
