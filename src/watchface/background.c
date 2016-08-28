@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "background.h"
+#include "watchface/background.h"
 #include "resource_broker.h"
 
 

@@ -1,7 +1,7 @@
 #include <pebble.h>
 #include "perlin.h"
-#include "watchface_view.h"
-#include "background.h"
+#include "watchface/view.h"
+#include "watchface/background.h"
 #include "resource_broker.h"
 
 

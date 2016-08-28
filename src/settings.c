@@ -1,7 +1,8 @@
 #include <pebble.h>
-#include "perlin.h"
+
 #include "settings.h"
-#include "watchface_view.h"
+#include "watchface/app.h"
+#include "watchface/view.h"
 
 
 enum {

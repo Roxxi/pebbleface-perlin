@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "perlin.h"
-#include "watchface_state.h"
+#include "watchface/state.h"
 #include "settings.h"
 
 
@@ -15,6 +15,8 @@ WatchfaceState* init_watchface_state(){
   state->cur_day = -1;
   state->charge_percent = 0;
   
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "{ 'bluetoothview':%d, 'hourlyvibe':%d, 'randomwallpaper':%d, 'showdate':%d, 'showbatt':%d }",
+          state->bluetoothvibe, state->hourlyvibe, state->randomwallpaper, state->showdate, state->showbatt);
   return state;
 }
 

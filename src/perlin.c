@@ -1,11 +1,10 @@
 #include <pebble.h>
 #include "perlin.h"
 #include "resource_broker.h"
-#include "watchface_view.h"
-#include "watchface_state.h"
+#include "watchface/view.h"
+#include "watchface/app.h"
 #include "settings.h"
 
-#define SYNC_BUFFER_SIZE 256
 
 static WatchfaceApp* app; // The App, in all it's glory
 
@@ -22,11 +21,6 @@ void log_mem_stats(){
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "total_heap: %zu", total);
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %zu", pct);
 }
-
-
-
-
-
 
 void update_battery_state(BatteryChargeState charge_state) {
   static char battery_text[] = "x100";
@@ -126,45 +120,11 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 
 }
 
-
-
 void force_update(void) {
   toggle_bluetooth(bluetooth_connection_service_peek());
   time_t now = time(NULL);
   update_time(localtime(&now));
 }
-
-
-
-WatchfaceApp* init_watchface_app(){
-
-  WatchfaceApp* app;
-
-  app = malloc(sizeof(WatchfaceApp));
-  //  app->sync no initializer?
-  app->sync_buffer = malloc(sizeof(uint8_t) * SYNC_BUFFER_SIZE);
-  app->view = init_watchface_view();
-  app->state = init_watchface_state();
-  // TODO move elsewhre
-  app_sync_init(&(app->sync), app->sync_buffer, SYNC_BUFFER_SIZE, NULL, 0,	NULL, NULL, app);
-  app_message_register_inbox_received(prv_inbox_received_handler);
-  app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
-
-  window_stack_push(app->view->window, true); // make the window appear on top
-
-  return app;
-}
-
-void deinit_watchface_app(WatchfaceApp* app){
-  free(app->sync_buffer);
-  app_sync_deinit(&(app->sync));
-  deinit_watchface_state(app->state);
-  deinit_watchface_view(app->view);
-  free(app);
-}
-
-
-
 
 void handle_init(void) {
 
@@ -174,7 +134,6 @@ void handle_init(void) {
   bluetooth_connection_service_subscribe(&toggle_bluetooth);
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   
- 
   // update the battery on launch
   update_battery_state(battery_state_service_peek());
 

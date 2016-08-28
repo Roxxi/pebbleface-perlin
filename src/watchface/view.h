@@ -1,7 +1,7 @@
 #pragma once
 
 #include <pebble.h>
-#include "background.h"
+#include "watchface/background.h"
 
 typedef enum {  TOP, HOUR, MIN, BOTTOM, DEV } TextLayerId ;
 
