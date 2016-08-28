@@ -11,6 +11,8 @@
   #define NUM_TEXT_LAYERS 4
 #endif
 
+/*********************** TextLayers ***********************/
+
 typedef struct {
   TextLayerId    id;
   GRect          text_area;
@@ -60,19 +62,6 @@ TextLayer* create_text_layer(TextLayerConfig tlc) {
   return layer;
 }
 
-WatchfaceView* init_window(WatchfaceView* wfv){
-  wfv->window = window_create();
-  wfv->window_layer = window_get_root_layer(wfv->window);
-  window_set_background_color(wfv->window, GColorWhite);
-  wfv->background = init_background(wfv->window_layer);
-  return wfv;
-}
-
-void deinit_window(WatchfaceView* wfv){
-  window_destroy(wfv->window);
-  deinit_background(wfv->background);
-}
-
 WatchfaceView* init_text_layers(WatchfaceView* wfv){
   TextLayerConfig tlc;
   TextLayerConfig *text_layer_configs;
@@ -95,6 +84,29 @@ void deinit_text_layers(WatchfaceView* wfv){
     text_layer_destroy(wfv->text_layers[i]);
   }  
 }
+
+
+
+/*********************** Window ***********************/
+
+
+
+
+WatchfaceView* init_window(WatchfaceView* wfv){
+  wfv->window = window_create();
+  wfv->window_layer = window_get_root_layer(wfv->window);
+  window_set_background_color(wfv->window, GColorWhite);
+  wfv->background = init_background(wfv->window_layer);
+  return wfv;
+}
+
+void deinit_window(WatchfaceView* wfv){
+  window_destroy(wfv->window);
+  deinit_background(wfv->background);
+}
+
+/*********************** View ***********************/
+
 
 void attach_layers(WatchfaceView * wfv){
   layer_add_child( wfv->window_layer, 
