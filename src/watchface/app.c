@@ -4,10 +4,7 @@
 #include "watchface/state.h"
 #include "service/settings.h"
 
-
 #define SYNC_BUFFER_SIZE 256
-
-
 
 WatchfaceApp* init_watchface_app(){
   WatchfaceApp* app;
@@ -20,7 +17,7 @@ WatchfaceApp* init_watchface_app(){
   app->state = init_watchface_state();
   app->view = init_watchface_view();
   app_sync_init(&(app->sync), app->sync_buffer, SYNC_BUFFER_SIZE, NULL, 0,	NULL, NULL, app);
-  app_message_register_inbox_received(prv_inbox_received_handler);
+  app_message_register_inbox_received(settings_inbox_received_handler);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
 
   

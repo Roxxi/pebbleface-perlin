@@ -3,4 +3,4 @@
 #include <pebble.h>
 
 
-void prv_inbox_received_handler(DictionaryIterator *iter, void *context);
+void settings_inbox_received_handler(DictionaryIterator *iter, void *context);

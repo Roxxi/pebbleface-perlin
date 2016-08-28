@@ -21,21 +21,21 @@ void handle_setting_showbatt(Tuple* setting, WatchfaceApp* app){
   state_update_show_battery(app->state, showbatt);
 }
 
-void handle_setting_randomwallpaper(Tuple* setting, WatchfaceApp* app){
+void handle_setting_random_background(Tuple* setting, WatchfaceApp* app){
   bool random_background;
   random_background = setting->value->uint8 == 1;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "random_background: %d", random_background);
   state_update_random_background(app->state, random_background);
 }
 
-void handle_setting_bluetoothvibe(Tuple* setting, WatchfaceApp* app){
+void handle_setting_bluetooth_vibe(Tuple* setting, WatchfaceApp* app){
   bool bluetoothvibe;
   bluetoothvibe = setting->value->uint8 == 1;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "bluetoothvibe: %d", bluetoothvibe);
   state_update_bluetooth_vibe(app->state, bluetoothvibe);
 }
 
-void handle_setting_hourlyvibe(Tuple* setting, WatchfaceApp* app){
+void handle_setting_hourly_vibe(Tuple* setting, WatchfaceApp* app){
   bool hourlyvibe;  
   hourlyvibe = setting->value->uint8 == 1;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "hourlyvibe: %d", hourlyvibe);
@@ -43,7 +43,6 @@ void handle_setting_hourlyvibe(Tuple* setting, WatchfaceApp* app){
 
 }
 
-// TODO move to service
 void handle_setting(Tuple* setting, WatchfaceApp* app){
   const uint32_t key = setting->key;
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting Key: %d", (int) key);
@@ -52,15 +51,15 @@ void handle_setting(Tuple* setting, WatchfaceApp* app){
   } else if (key == MESSAGE_KEY_showbatt) {
       handle_setting_showbatt(setting, app);
   } else if (key == MESSAGE_KEY_randomwallpaper) {
-      handle_setting_randomwallpaper(setting, app);
+      handle_setting_random_background(setting, app);
   } else if (key == MESSAGE_KEY_bluetoothvibe) {
-      handle_setting_bluetoothvibe(setting, app);
+      handle_setting_bluetooth_vibe(setting, app);
   } else if (key == MESSAGE_KEY_hourlyvibe) {
-      handle_setting_hourlyvibe(setting, app);
+      handle_setting_hourly_vibe(setting, app);
   }
 }
 
-void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
+void settings_inbox_received_handler(DictionaryIterator *iter, void *context) {
 
   WatchfaceApp* app;
   Tuple *cur;
