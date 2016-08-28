@@ -13,3 +13,5 @@ typedef struct {
 
 WatchfaceApp* init_watchface_app();
 void deinit_watchface_app(WatchfaceApp* app);
+
+void settings_reload_view(WatchfaceApp* app);

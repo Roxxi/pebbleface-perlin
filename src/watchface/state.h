@@ -16,3 +16,4 @@ typedef struct {
 WatchfaceState* init_watchface_state();
 void deinit_watchface_state(WatchfaceState*);
 
+void sync_settings_state(WatchfaceState* state);

@@ -3,6 +3,7 @@
 #include "settings.h"
 #include "watchface/app.h"
 #include "watchface/view.h"
+#include "watchface/state.h"
 
 
 enum {
@@ -17,13 +18,9 @@ void handle_setting_showdate(Tuple* setting, WatchfaceApp* app){
   bool showdate;
   
   showdate = setting->value->uint8 == 1;
-  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "showdate: %d", showdate);
   persist_write_bool(DATE_KEY, showdate);
-  app->state->showdate = showdate;
-  showdate ? 
-    date_text_show(app->view): 
-    date_text_hide(app->view);
+ 
 }
 
 void handle_setting_showbatt(Tuple* setting, WatchfaceApp* app){
@@ -33,10 +30,6 @@ void handle_setting_showbatt(Tuple* setting, WatchfaceApp* app){
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "showbatt: %d", showbatt);
   persist_write_bool(BATT_KEY, showbatt);
-  app->state->showbatt = showbatt;
-  showbatt ? 
-    battery_text_show(app->view): 
-    battery_text_hide(app->view);
 }
 
 void handle_setting_randomwallpaper(Tuple* setting, WatchfaceApp* app){
@@ -46,10 +39,6 @@ void handle_setting_randomwallpaper(Tuple* setting, WatchfaceApp* app){
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "randomwallpaper: %d", randomwallpaper);
   persist_write_bool(RANDOMTIME_KEY, randomwallpaper);
-  app->state->randomwallpaper = randomwallpaper;
-  if (randomwallpaper) {
-    random_background(app->view);
-  }
 }
 
 void handle_setting_bluetoothvibe(Tuple* setting, WatchfaceApp* app){
@@ -59,7 +48,6 @@ void handle_setting_bluetoothvibe(Tuple* setting, WatchfaceApp* app){
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "bluetoothvibe: %d", bluetoothvibe);
   persist_write_bool(BLUETOOTHVIBE_KEY, bluetoothvibe);
-  app->state->bluetoothvibe = bluetoothvibe;
 }
 
 void handle_setting_hourlyvibe(Tuple* setting, WatchfaceApp* app){
@@ -69,7 +57,6 @@ void handle_setting_hourlyvibe(Tuple* setting, WatchfaceApp* app){
   
   APP_LOG(APP_LOG_LEVEL_DEBUG, "hourlyvibe: %d", hourlyvibe);
   persist_write_bool(HOURLYVIBE_KEY, hourlyvibe);
-  app->state->hourlyvibe = hourlyvibe;
 }
 
 void handle_setting(Tuple* setting, void* context){
@@ -89,6 +76,10 @@ void handle_setting(Tuple* setting, void* context){
   } else if (key == MESSAGE_KEY_hourlyvibe) {
       handle_setting_hourlyvibe(setting, app);
   }
+  // Make sure to sync the settings with app state once we've loaded
+  sync_settings_state(app->state);
+  // refresh view that settings control
+  settings_reload_view(app);
 }
 
 void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
@@ -102,18 +93,24 @@ void prv_inbox_received_handler(DictionaryIterator *iter, void *context) {
 bool setting_read_bluetooth() {
   return persist_read_bool(BLUETOOTHVIBE_KEY);
 }
+
 bool setting_read_hourlyvibe(){
   return persist_read_bool(HOURLYVIBE_KEY);
 }
+
 bool setting_read_randomwallpaper(){
   return persist_read_bool(RANDOMTIME_KEY);
 }
+
 bool setting_read_showdate(){
   return persist_read_bool(DATE_KEY);
 }
+
 bool setting_read_showbatt(){
   return persist_read_bool(BATT_KEY);
 }
+
+
 
 
 
