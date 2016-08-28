@@ -137,6 +137,7 @@ void handle_init(void) {
 
   // draw first frame
   settings_reload_view(app);
+  window_stack_push(app->view->window, true); // make the window appear on top
   force_update();
 }
 

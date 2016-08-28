@@ -22,8 +22,7 @@ WatchfaceApp* init_watchface_app(){
   app_message_register_inbox_received(prv_inbox_received_handler);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
 
-  window_stack_push(app->view->window, true); // make the window appear on top
-
+  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Initialization");
   
   return app;

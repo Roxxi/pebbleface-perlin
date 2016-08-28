@@ -1,18 +1,24 @@
 module.exports = [
   { 
     "type": "heading", 
-    "defaultValue": "Example Header Item" 
+    "defaultValue": "Perlin Configuration" 
   }, 
   { 
     "type": "text", 
-    "defaultValue": "Example text item." 
+    "defaultValue": "Let's make it right for you" 
   },
   {
     "type": "section",
     "items": [
       {
         "type": "heading",
-        "defaultValue": "Settings"
+        "defaultValue": "Watchface Display"
+      },
+      {
+        "type": "toggle",
+        "messageKey": "showbatt",
+        "label": "Show Battery",
+        "defaultValue": true
       },
       {
         "type": "toggle",
@@ -22,9 +28,18 @@ module.exports = [
       },
       {
         "type": "toggle",
-        "messageKey": "showbatt",
-        "label": "Show Battery",
+        "messageKey": "randomwallpaper",
+        "label": "Hourly Wallpaper Change",
         "defaultValue": true
+      }
+    ]
+  },
+  {  
+    "type": "section",
+    "items": [
+      {
+        "type": "heading",
+        "defaultValue": "Watchface Alerts"
       },
       {
         "type": "toggle",
@@ -38,13 +53,7 @@ module.exports = [
         "label": "Vibe on Away",
         "description": "Watch vibrates when bluetooth connection is lost",
         "defaultValue": false
-      },
-      {
-        "type": "toggle",
-        "messageKey": "randomwallpaper",
-        "label": "Hourly Wallpaper Change",
-        "defaultValue": true
-      }
+      },   
     ]
   },
   {
