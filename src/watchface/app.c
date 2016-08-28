@@ -78,6 +78,18 @@ void app_update_charge_percent(WatchfaceApp* app, int charge_percent, bool is_ch
 }
 
 
+void app_update_bluetooth_connection(WatchfaceApp* app, bool is_connected){
+  bool notify_user;
+
+  notify_user = state_read_bluetooth_vibe(app->state);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, 
+          "Bluetooth connection state: %d, notify_user: %d", 
+          is_connected, notify_user);  
+  if (!is_connected && notify_user) {
+    vibes_long_pulse(); //vibe!
+  }
+}
+
 
 
 

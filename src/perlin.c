@@ -4,6 +4,8 @@
 #include "watchface/app.h"
 #include "service/settings.h"
 #include "service/battery_service.h"
+#include "service/connection_service.h"
+
 
 
 static WatchfaceApp* app; // The App, in all it's glory
@@ -24,16 +26,7 @@ void log_mem_stats(){
 
 
 
-static void toggle_bluetooth(bool connected) {
 
-  if (!connected && state_read_bluetooth_vibe(app->state)) {
-    vibes_long_pulse(); //vibe!
-  }
-}
-
-void bluetooth_connection_callback(bool connected) {
-  toggle_bluetooth(connected);
-}
 
 void update_time(struct tm *tick_time) {
 
@@ -111,7 +104,7 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 void force_update(void) {
    // update the battery on launch
   battery_charge_state_callback(battery_state_service_peek());
-  toggle_bluetooth(bluetooth_connection_service_peek());
+  service_connection_service_update_state();
   time_t now = time(NULL);
   update_time(localtime(&now));
   settings_reload_view(app);
@@ -124,7 +117,7 @@ void handle_init(void) {
   app=init_watchface_app();
   // handlers
   battery_state_service_subscribe(&battery_charge_state_callback);
-  bluetooth_connection_service_subscribe(&toggle_bluetooth);
+  service_connection_service_subscribe();
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   
   
@@ -135,7 +128,7 @@ void handle_deinit(void) {
 
   deinit_watchface_app(app);
   tick_timer_service_unsubscribe();
-  bluetooth_connection_service_unsubscribe();
+  service_connection_service_unsubscribe();
   battery_state_service_unsubscribe();
 }
 
