@@ -3,6 +3,7 @@
 #include "watchface/view.h"
 #include "watchface/app.h"
 #include "service/settings.h"
+#include "service/battery_service.h"
 
 
 static WatchfaceApp* app; // The App, in all it's glory
@@ -21,17 +22,7 @@ void log_mem_stats(){
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %zu", pct);
 }
 
-void update_battery_state(BatteryChargeState charge_state) {
-  static char battery_text[] = "x100";
 
-  if (charge_state.is_charging) {
-	snprintf(battery_text, sizeof(battery_text), "+%d", charge_state.charge_percent);
-  } else {
-	snprintf(battery_text, sizeof(battery_text), "%d", charge_state.charge_percent);
-  }
-  app->state->charge_percent = charge_state.charge_percent;
-  text_layer_set_text(app->view->text_layers[TOP], battery_text);
-}
 
 static void toggle_bluetooth(bool connected) {
 
@@ -119,7 +110,7 @@ void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 
 void force_update(void) {
    // update the battery on launch
-  update_battery_state(battery_state_service_peek());
+  battery_charge_state_callback(battery_state_service_peek());
   toggle_bluetooth(bluetooth_connection_service_peek());
   time_t now = time(NULL);
   update_time(localtime(&now));
@@ -132,7 +123,7 @@ void handle_init(void) {
 
   app=init_watchface_app();
   // handlers
-  battery_state_service_subscribe(&update_battery_state);
+  battery_state_service_subscribe(&battery_charge_state_callback);
   bluetooth_connection_service_subscribe(&toggle_bluetooth);
   tick_timer_service_subscribe(MINUTE_UNIT, handle_minute_tick);
   

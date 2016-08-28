@@ -42,6 +42,13 @@ TextLayerConfig*  init_text_layer_configs(){
   return tlcs;
 }
 
+void deinit_text_layer_configs(TextLayerConfig* tlcs){
+  // Don't need to do a deep clean here-
+  // Fonts need to stick around and are cleaned up elsewhere
+  // Everything else isn't a pointer
+  free(tlcs);
+}
+
 TextLayer* create_text_layer(TextLayerConfig tlc) {
   TextLayer* layer; 
 
@@ -77,7 +84,9 @@ WatchfaceView* init_text_layers(WatchfaceView* wfv){
     tlc = text_layer_configs[i];
     id = tlc.id;
     wfv->text_layers[id] = create_text_layer(tlc);
-  }  
+  }
+  // We never reference the text_layer_configs again; they're just for bootstrap
+  deinit_text_layer_configs(text_layer_configs);  
   return wfv;
 }
 
@@ -142,8 +151,17 @@ WatchfaceView* battery_text_hide(WatchfaceView* wfv){
   return wfv;
 }
 
+WatchfaceView* view_battery_text_update(WatchfaceView* wfv, int pct, bool is_charging){
+  static char battery_text[] = "x100";
 
-
-
+  if (is_charging) {
+	snprintf(battery_text, sizeof(battery_text), "+%d", pct);
+  } else {
+	snprintf(battery_text, sizeof(battery_text), "%d", pct);
+  }
+  text_layer_set_text(wfv->text_layers[TOP], battery_text);
+  
+  return wfv;
+}
 
 

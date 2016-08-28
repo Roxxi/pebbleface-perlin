@@ -6,6 +6,8 @@
 
 #define SYNC_BUFFER_SIZE 256
 
+static WatchfaceApp* the_app;
+
 WatchfaceApp* init_watchface_app(){
   WatchfaceApp* app;
 
@@ -23,6 +25,9 @@ WatchfaceApp* init_watchface_app(){
   
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Initialization");
   
+  // TODO get rid of singleton integration
+  // This helps with service integration for now
+  the_app = app; 
   return app;
   
 }
@@ -39,6 +44,10 @@ void deinit_watchface_app(WatchfaceApp* app){
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Deallocation");
 
+}
+
+WatchfaceApp* watchface_app(){
+  return the_app;
 }
 
 void settings_reload_view(WatchfaceApp* app){
@@ -59,5 +68,16 @@ void settings_reload_view(WatchfaceApp* app){
      random_background(app->view);
    }
 }
+
+void app_update_charge_percent(WatchfaceApp* app, int charge_percent, bool is_charging){
+  APP_LOG(APP_LOG_LEVEL_DEBUG, 
+          "Updating Charge Percent: pct %d, is_charging %d",
+          charge_percent, is_charging);
+  state_update_charge_percent(app->state, charge_percent);
+  view_battery_text_update(app->view, charge_percent, is_charging); 
+}
+
+
+
 
 
