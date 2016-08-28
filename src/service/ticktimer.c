@@ -1,3 +1,3 @@
 #include <pebble.h>
-#include "service/weather_service.h"
+#include "service/ticktimer.h"
 #include "watchface/app.h"

@@ -3,8 +3,8 @@
 #include "watchface/view.h"
 #include "watchface/app.h"
 #include "service/settings.h"
-#include "service/battery_service.h"
-#include "service/connection_service.h"
+#include "service/battery.h"
+#include "service/connection.h"
 
 
 

@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "service/connection_service.h"
+#include "service/connection.h"
 #include "watchface/app.h"
 
 

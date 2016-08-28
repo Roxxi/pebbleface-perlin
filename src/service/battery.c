@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "service/battery_service.h"
+#include "service/battery.h"
 #include "watchface/app.h"
 
 
