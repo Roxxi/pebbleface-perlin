@@ -1,8 +1,9 @@
 #include <pebble.h>
 #include "watchface/app.h"
-#include "settings.h"
 #include "watchface/view.h"
 #include "watchface/state.h"
+#include "service/settings.h"
+
 
 #define SYNC_BUFFER_SIZE 256
 

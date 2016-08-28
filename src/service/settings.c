@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-#include "settings.h"
+#include "service/settings.h"
 #include "watchface/app.h"
 #include "watchface/view.h"
 #include "watchface/state.h"

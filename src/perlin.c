@@ -1,9 +1,8 @@
 #include <pebble.h>
 #include "perlin.h"
-#include "resource_broker.h"
 #include "watchface/view.h"
 #include "watchface/app.h"
-#include "settings.h"
+#include "service/settings.h"
 
 
 static WatchfaceApp* app; // The App, in all it's glory

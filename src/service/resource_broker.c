@@ -1,5 +1,5 @@
 #include <pebble.h>
-#include "resource_broker.h"
+#include "service/resource_broker.h"
 
 typedef uint32_t ResourceId;
 

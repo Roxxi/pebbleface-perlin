@@ -1,6 +1,6 @@
 #include <pebble.h>
 #include "watchface/background.h"
-#include "resource_broker.h"
+#include "service/resource_broker.h"
 
 
 

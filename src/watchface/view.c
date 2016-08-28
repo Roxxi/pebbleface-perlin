@@ -2,7 +2,7 @@
 #include "perlin.h"
 #include "watchface/view.h"
 #include "watchface/background.h"
-#include "resource_broker.h"
+#include "service/resource_broker.h"
 
 
 #if DEV_MODE
