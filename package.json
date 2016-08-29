@@ -7,8 +7,7 @@
     "name": "perlin-2",
     "pebble": {
         "capabilities": [
-            "configurable",
-            "health"
+            "configurable"
         ],
         "displayName": "perlin 2",
         "enableMultiJS": true,
