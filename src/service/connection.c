@@ -3,19 +3,21 @@
 #include "watchface/app.h"
 
 
+static WatchfaceApp* app;
 
 static void app_connection_handler(bool connected) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Pebble app %sconnected", connected ? "" : "dis");
-  app_handle_bluetooth_connection(watchface_app(), connected);
+  app_handle_bluetooth_connection(app, connected);
 }
 
 static void kit_connection_handler(bool connected) {
   // Always false on Android
   APP_LOG(APP_LOG_LEVEL_INFO, "PebbleKit %sconnected", connected ? "" : "dis");
-  app_handle_bluetooth_connection(watchface_app(), connected); 
+  app_handle_bluetooth_connection(app, connected); 
 }
 
-void service_connection_service_subscribe() {
+void service_connection_service_subscribe(WatchfaceApp* a) {
+  app = a;
   connection_service_subscribe((ConnectionHandlers) {
     .pebble_app_connection_handler = app_connection_handler,
     .pebblekit_connection_handler = kit_connection_handler

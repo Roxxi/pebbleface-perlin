@@ -3,14 +3,17 @@
 #include "watchface/app.h"
 
 
+static WatchfaceApp* app;
+
 void battery_charge_state_handler(BatteryChargeState charge_state) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Handling battery charge state update");
-  app_handle_charge_percent(watchface_app(), 
+  app_handle_charge_percent(app, 
                             charge_state.charge_percent, 
                             charge_state.is_charging);
 }
 
-void service_battery_state_service_subscribe(){
+void service_battery_state_service_subscribe(WatchfaceApp* a){
+  app = a;
   battery_state_service_subscribe(battery_charge_state_handler);
 }
 

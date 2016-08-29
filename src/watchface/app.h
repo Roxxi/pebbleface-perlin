@@ -1,6 +1,7 @@
 #pragma once
 
 #include <pebble.h>
+#include "perlin.h"
 #include "watchface/view.h"
 #include "watchface/state.h"
 
@@ -17,8 +18,8 @@ WatchfaceApp* init_watchface_app();
 // Destructor
 void deinit_watchface_app(WatchfaceApp* app);
 
-// Singleton for service intergration
-WatchfaceApp* watchface_app();
+// Update screen
+void watchface_app_update(WatchfaceApp* app);
 
 // Handlers
 void settings_reload_view(WatchfaceApp* app);

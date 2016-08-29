@@ -3,10 +3,11 @@
 #include "watchface/view.h"
 #include "watchface/state.h"
 #include "service/settings.h"
+#include "service/battery.h"
+#include "service/connection.h"
+#include "service/ticktimer.h"
 
 #define SYNC_BUFFER_SIZE 256
-
-static WatchfaceApp* the_app;
 
 WatchfaceApp* init_watchface_app(){
   WatchfaceApp* app;
@@ -14,41 +15,54 @@ WatchfaceApp* init_watchface_app(){
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting App Initialization");
 
   app = malloc(sizeof(WatchfaceApp));
-  //  app->sync no initializer?
+
   app->sync_buffer = malloc(sizeof(uint8_t) * SYNC_BUFFER_SIZE);
-  app->state = init_watchface_state();
-  app->view = init_watchface_view();
   app_sync_init(&(app->sync), app->sync_buffer, SYNC_BUFFER_SIZE, NULL, 0,	NULL, NULL, app);
   app_message_register_inbox_received(settings_inbox_received_handler);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
 
-  
+  app->state = init_watchface_state();
+  app->view = init_watchface_view();
+
+  // service handler callbacks
+  service_battery_state_service_subscribe(app);
+  service_connection_service_subscribe(app);
+  service_tick_timer_service_subscribe(app);
+    
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Initialization");
-  
-  // TODO get rid of singleton integration
-  // This helps with service integration for now
-  the_app = app; 
+
   return app;
   
 }
 
+// n.b. - reverse order of constructor
 void deinit_watchface_app(WatchfaceApp* app){
-  
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting App Deallocation");
 
-  free(app->sync_buffer);
-  app_sync_deinit(&(app->sync));
-  deinit_watchface_state(app->state);
+  // deregister service handlers
+  service_tick_timer_service_unsubscribe();
+  service_connection_service_unsubscribe();
+  service_battery_state_service_unsubscribe();
+  // free allocated memory
   deinit_watchface_view(app->view);
+  deinit_watchface_state(app->state);
+  app_sync_deinit(&(app->sync));
+  free(app->sync_buffer);
   free(app);
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Completed App Deallocation");
 
 }
 
-WatchfaceApp* watchface_app(){
-  return the_app;
+void watchface_app_update(WatchfaceApp* app){
+  service_connection_service_update();
+  service_battery_state_service_update();
+  service_tick_timer_service_update();
+  settings_reload_view(app);
+  window_stack_push(app->view->window, true); 
 }
+
+
 
 void settings_reload_view(WatchfaceApp* app){
 
@@ -177,7 +191,6 @@ void minute_test_debug (WatchfaceApp* app, struct tm *tick_time){
   log_mem_stats();
   random_background(app->view);  // used for testing
   log_mem_stats();
-  }
   text_layer_set_text(app->view->text_layers[DEV], "DEV");
 }
 #endif
