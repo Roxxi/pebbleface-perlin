@@ -139,31 +139,37 @@ WatchfaceView* random_background(WatchfaceView* wfv) {
   return wfv;
 }
 
-WatchfaceView* date_text_show(WatchfaceView* wfv){
+WatchfaceView* view_bottom_text_show(WatchfaceView* wfv){
   APP_LOG(APP_LOG_LEVEL_INFO, "Showing Date");
   layer_set_hidden(text_layer_get_layer(wfv->text_layers[BOTTOM]), false);
   return wfv;
 }
 
-WatchfaceView* date_text_hide(WatchfaceView* wfv){
+WatchfaceView* view_bottom_text_hide(WatchfaceView* wfv){
   APP_LOG(APP_LOG_LEVEL_INFO, "Hiding Date"); 
   layer_set_hidden(text_layer_get_layer(wfv->text_layers[BOTTOM]), true);
   return wfv;
 }
 
-WatchfaceView* battery_text_show(WatchfaceView* wfv){
+WatchfaceView* view_bottom_text_update(WatchfaceView* wfv, char* text){
+  text_layer_set_text(wfv->text_layers[BOTTOM], text);
+  return wfv;
+}
+
+
+WatchfaceView* view_top_text_show(WatchfaceView* wfv){
   APP_LOG(APP_LOG_LEVEL_INFO, "Showing Battery"); 
   layer_set_hidden(text_layer_get_layer(wfv->text_layers[TOP]), false);
   return wfv;
 }
 
-WatchfaceView* battery_text_hide(WatchfaceView* wfv){
+WatchfaceView* view_top_text_hide(WatchfaceView* wfv){
   APP_LOG(APP_LOG_LEVEL_INFO, "Hiding Battery"); 
   layer_set_hidden(text_layer_get_layer(wfv->text_layers[TOP]), true);
   return wfv;
 }
 
-WatchfaceView* view_battery_text_update(WatchfaceView* wfv, int pct, bool is_charging){
+WatchfaceView* view_top_text_update(WatchfaceView* wfv, int pct, bool is_charging){
   static char battery_text[] = "x100";
 
   if (is_charging) {

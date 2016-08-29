@@ -69,10 +69,7 @@ void settings_inbox_received_handler(DictionaryIterator *iter, void *context) {
   for(cur = dict_read_first(iter); cur != NULL ; cur = dict_read_next(iter)) {
     handle_setting(cur, context);
   }
-  // Make sure to sync the settings with app state once we've loaded
-  state_persist_settings(app->state); 
-  // refresh view that settings control
-  settings_reload_view(app);
+  app_handle_apply_settings(app);
 
 }
 

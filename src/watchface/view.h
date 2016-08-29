@@ -19,12 +19,14 @@ void deinit_watchface_view(WatchfaceView*);
 // TODO prefix view
 WatchfaceView* random_background(WatchfaceView*);
 
-WatchfaceView* date_text_show(WatchfaceView*);
-WatchfaceView* date_text_hide(WatchfaceView*);
+WatchfaceView* view_bottom_text_show(WatchfaceView* view);
+WatchfaceView* view_bottom_text_hide(WatchfaceView* view);
+WatchfaceView* view_bottom_text_update(WatchfaceView* view, char* text);
 
-WatchfaceView* battery_text_show(WatchfaceView*);
-WatchfaceView* battery_text_hide(WatchfaceView*);
-WatchfaceView* view_battery_text_update(WatchfaceView*, int percent, bool is_charging);
+
+WatchfaceView* view_top_text_show(WatchfaceView* view);
+WatchfaceView* view_top_text_hide(WatchfaceView* view);
+WatchfaceView* view_top_text_update(WatchfaceView*, int percent, bool is_charging);
 
 
 

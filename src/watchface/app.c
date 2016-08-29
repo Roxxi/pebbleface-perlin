@@ -58,27 +58,39 @@ void watchface_app_update(WatchfaceApp* app){
   service_connection_service_update();
   service_battery_state_service_update();
   service_tick_timer_service_update();
-  settings_reload_view(app);
+  app_handle_top_text_toggle(app);
+  app_handle_bottom_text_toggle(app);
+  app_handle_random_background(app); 
   window_stack_push(app->view->window, true); 
 }
 
+void app_handle_apply_settings(WatchfaceApp* app){
+  // Make sure to sync the settings with app state once we've loaded
+  state_persist_settings(app->state); 
+  // refresh view that settings control
+  app_handle_top_text_toggle(app);
+  app_handle_bottom_text_toggle(app);
+  app_handle_random_background(app);
+}
 
-
-void settings_reload_view(WatchfaceApp* app){
-
+void app_handle_top_text_toggle(WatchfaceApp* app){
   if (state_read_show_battery(app->state)) {
-    battery_text_show(app->view);
+    view_top_text_show(app->view);
   } else { 
-    battery_text_hide(app->view);
+    view_top_text_hide(app->view);
   }
-  
+}
+
+void app_handle_bottom_text_toggle(WatchfaceApp* app) {
   if (state_read_show_date(app->state)) {
-    date_text_show(app->view);
+    view_bottom_text_show(app->view);
   } else {
-    date_text_hide(app->view);
+    view_bottom_text_hide(app->view);
   }
- 
-   if (state_read_random_background(app->state)) {
+}
+
+void app_handle_random_background(WatchfaceApp* app){
+  if (state_read_random_background(app->state)) {
      random_background(app->view);
    }
 }
@@ -88,7 +100,7 @@ void app_handle_charge_percent(WatchfaceApp* app, int charge_percent, bool is_ch
           "Updating Charge Percent: pct %d, is_charging %d",
           charge_percent, is_charging);
   state_update_charge_percent(app->state, charge_percent);
-  view_battery_text_update(app->view, charge_percent, is_charging); 
+  view_top_text_update(app->view, charge_percent, is_charging); 
 }
 
 
@@ -105,6 +117,8 @@ void app_handle_bluetooth_connection(WatchfaceApp* app, bool is_connected){
 }
 
 /************ Hour Tick Handler **************/
+
+// Hourly Bell
 
 void hourly_vibe(WatchfaceApp* app){
   bool notify_user;
@@ -127,37 +141,49 @@ void app_handle_hour_tick(WatchfaceApp* app, struct tm *tick_time, TimeUnits uni
 
 /************ Minute Tick Handler **************/
 
+char* formatted_current_date_text(WatchfaceApp* app, struct tm *tick_time) {
+  static char date_text[] = "XXX XXX 00XX XXX";
+  switch(tick_time->tm_mday) {
+    case 1 :
+    case 21 :
+  	case 31 :
+  	  strftime(date_text, sizeof(date_text), "%a, %est %b", tick_time);
+      break;
+    case 2 :
+    case 22 :
+      strftime(date_text, sizeof(date_text), "%a, %end %b", tick_time);
+      break;
+    case 3 :
+    case 23 :
+      strftime(date_text, sizeof(date_text), "%a, %erd %b", tick_time);
+      break;
+    default :
+      strftime(date_text, sizeof(date_text), "%a, %eth %b", tick_time);
+      break;
+  } // end switch
+  return date_text;
+}
+
+void update_date(WatchfaceApp* app, struct tm *tick_time) {
+  char* date_text;
+  int new_cur_day, prev_cur_day;
+
+  new_cur_day = tick_time->tm_year*1000 + tick_time->tm_yday;
+  prev_cur_day = state_read_current_day(app->state);
+
+  if (new_cur_day != prev_cur_day) {
+      state_update_current_day(app->state, new_cur_day);
+      date_text = formatted_current_date_text(app, tick_time);
+      view_bottom_text_update(app->view, date_text);
+  }
+}
+
 void update_time(WatchfaceApp* app, struct tm *tick_time) {
 
   static char h_time_text[] = "00";
   static char m_time_text[] = "00";
-  static char date_text[] = "XXX XXX 00XX XXX";
-
   char *h_time_format;
-  int new_cur_day = tick_time->tm_year*1000 + tick_time->tm_yday;
-
-  if (new_cur_day != state_read_current_day(app->state)) {
-    state_update_current_day(app->state, new_cur_day);
-	  switch(tick_time->tm_mday) {
-  	  case 1 :
-  	  case 21 :
-  	  case 31 :
-  	    strftime(date_text, sizeof(date_text), "%a, %est %b", tick_time);
-    	  break;
-    	case 2 :
-    	case 22 :
-        strftime(date_text, sizeof(date_text), "%a, %end %b", tick_time);
-        break;
-      case 3 :
-      case 23 :
-        strftime(date_text, sizeof(date_text), "%a, %erd %b", tick_time);
-        break;
-      default :
-        strftime(date_text, sizeof(date_text), "%a, %eth %b", tick_time);
-        break;
-    } // end switch
-  text_layer_set_text(app->view->text_layers[BOTTOM], date_text);
-  } // end if
+  
   if (clock_is_24h_style()) {
     h_time_format = "%H";
   } else {
@@ -186,10 +212,10 @@ void log_mem_stats(){
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "percent_used: %zu", pct);
 }
 
-void minute_test_debug (WatchfaceApp* app, struct tm *tick_time){
+void minute_test_debug(WatchfaceApp* app, struct tm *tick_time){
   APP_LOG(APP_LOG_LEVEL_DEBUG_VERBOSE, "Updating Background on the Minute");
   log_mem_stats();
-  random_background(app->view);  // used for testing
+  app_handle_random_background(app);
   log_mem_stats();
   text_layer_set_text(app->view->text_layers[DEV], "DEV");
 }
@@ -202,9 +228,12 @@ void app_handle_minute_tick(WatchfaceApp* app, struct tm *tick_time, TimeUnits u
   if (units_changed & HOUR_UNIT) {
     app_handle_hour_tick(app, tick_time, units_changed);
   }
-  
   if (units_changed & MINUTE_UNIT) {
+    // n.b. Why is date updated on the minute?
+    // A traveller may land in a different locale on the other side of
+    // international dateline. The watch should update the date immediately.
     update_time(app, tick_time);
+    update_date(app, tick_time);
     #if DEV_MODE == 1
     minute_test_debug(app, tick_time);
     #endif
