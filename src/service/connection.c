@@ -6,13 +6,13 @@
 
 static void app_connection_handler(bool connected) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Pebble app %sconnected", connected ? "" : "dis");
-  app_update_bluetooth_connection(watchface_app(), connected);
+  app_handle_bluetooth_connection(watchface_app(), connected);
 }
 
 static void kit_connection_handler(bool connected) {
   // Always false on Android
   APP_LOG(APP_LOG_LEVEL_INFO, "PebbleKit %sconnected", connected ? "" : "dis");
-  app_update_bluetooth_connection(watchface_app(), connected); 
+  app_handle_bluetooth_connection(watchface_app(), connected); 
 }
 
 void service_connection_service_subscribe() {

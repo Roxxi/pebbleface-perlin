@@ -22,5 +22,7 @@ WatchfaceApp* watchface_app();
 
 // Handlers
 void settings_reload_view(WatchfaceApp* app);
-void app_update_charge_percent(WatchfaceApp* app, int charge_percent, bool is_charging);
-void app_update_bluetooth_connection(WatchfaceApp* app, bool is_connected);
+void app_handle_charge_percent(WatchfaceApp* app, int charge_percent, bool is_charging);
+void app_handle_bluetooth_connection(WatchfaceApp* app, bool is_connected);
+void app_handle_hour_tick(WatchfaceApp* app, struct tm *tick_time, TimeUnits units_changed);
+void app_handle_minute_tick(WatchfaceApp* app, struct tm *tick_time, TimeUnits units_changed);
