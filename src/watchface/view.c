@@ -116,7 +116,7 @@ void attach_layers(WatchfaceView * wfv){
   }
 }
 
-WatchfaceView* init_watchface_view() {
+WatchfaceView* watchface_view_init() {
   WatchfaceView* wfv;
 
   wfv = malloc(sizeof(WatchfaceView));
@@ -126,16 +126,31 @@ WatchfaceView* init_watchface_view() {
   return wfv;
 }
 
-void deinit_watchface_view(WatchfaceView* wfv){
+void watchface_view_deinit(WatchfaceView* wfv){
   deinit_text_layers(wfv);
   deinit_window(wfv);
   deinit_fonts();
   free(wfv);
 }
 
-WatchfaceView* random_background(WatchfaceView* wfv) {
+WatchfaceView* view_show_random_background(WatchfaceView* wfv) {
   APP_LOG(APP_LOG_LEVEL_INFO, "Swapping Background");
   set_random_background(wfv->background);
+  return wfv;
+}
+
+WatchfaceView* view_push_window(WatchfaceView* wfv){
+  window_stack_push(wfv->window, true); 
+  return wfv;
+}
+
+WatchfaceView* view_hour_text_update(WatchfaceView* wfv, char* text){
+  text_layer_set_text(wfv->text_layers[HOUR], text);
+  return wfv;
+}
+
+WatchfaceView* view_minute_text_update(WatchfaceView* wfv, char* text){
+  text_layer_set_text(wfv->text_layers[MIN], text);
   return wfv;
 }
 

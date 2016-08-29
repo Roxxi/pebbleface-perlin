@@ -1,4 +1,5 @@
 #include <pebble.h>
+#include "perlin.h" 
 #include "watchface/app.h"
 #include "watchface/view.h"
 #include "watchface/state.h"
@@ -9,7 +10,7 @@
 
 #define SYNC_BUFFER_SIZE 256
 
-WatchfaceApp* init_watchface_app(){
+WatchfaceApp* watchface_app_init(){
   WatchfaceApp* app;
 
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting App Initialization");
@@ -21,8 +22,8 @@ WatchfaceApp* init_watchface_app(){
   app_message_register_inbox_received(settings_inbox_received_handler);
   app_message_open(SYNC_BUFFER_SIZE, SYNC_BUFFER_SIZE); 
 
-  app->state = init_watchface_state();
-  app->view = init_watchface_view();
+  app->state = watchface_state_init();
+  app->view = watchface_view_init();
 
   // service handler callbacks
   service_battery_state_service_subscribe(app);
@@ -36,7 +37,7 @@ WatchfaceApp* init_watchface_app(){
 }
 
 // n.b. - reverse order of constructor
-void deinit_watchface_app(WatchfaceApp* app){
+void watchface_app_deinit(WatchfaceApp* app){
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Starting App Deallocation");
 
   // deregister service handlers
@@ -44,8 +45,8 @@ void deinit_watchface_app(WatchfaceApp* app){
   service_connection_service_unsubscribe();
   service_battery_state_service_unsubscribe();
   // free allocated memory
-  deinit_watchface_view(app->view);
-  deinit_watchface_state(app->state);
+  watchface_view_deinit(app->view);
+  watchface_state_deinit(app->state);
   app_sync_deinit(&(app->sync));
   free(app->sync_buffer);
   free(app);
@@ -54,14 +55,14 @@ void deinit_watchface_app(WatchfaceApp* app){
 
 }
 
-void watchface_app_update(WatchfaceApp* app){
+void watchface_app_bootstrap(WatchfaceApp* app){
   service_connection_service_update();
   service_battery_state_service_update();
   service_tick_timer_service_update();
   app_handle_top_text_toggle(app);
   app_handle_bottom_text_toggle(app);
-  app_handle_random_background(app); 
-  window_stack_push(app->view->window, true); 
+  app_handle_random_background(app);
+  view_push_window(app->view);
 }
 
 void app_handle_apply_settings(WatchfaceApp* app){
@@ -91,7 +92,7 @@ void app_handle_bottom_text_toggle(WatchfaceApp* app) {
 
 void app_handle_random_background(WatchfaceApp* app){
   if (state_read_random_background(app->state)) {
-     random_background(app->view);
+     view_show_random_background(app->view);
    }
 }
 
@@ -135,7 +136,7 @@ void hourly_vibe(WatchfaceApp* app){
 void app_handle_hour_tick(WatchfaceApp* app, struct tm *tick_time, TimeUnits units_changed){
   if (units_changed & HOUR_UNIT) { 
     hourly_vibe(app);
-    random_background(app->view);
+    app_handle_random_background(app);
   }
 }
 
@@ -190,10 +191,9 @@ void update_time(WatchfaceApp* app, struct tm *tick_time) {
     h_time_format = "%I";
   }
   strftime(h_time_text, sizeof(h_time_text), h_time_format, tick_time);
-  text_layer_set_text(app->view->text_layers[HOUR], h_time_text);
-
+  view_hour_text_update(app->view, h_time_text);
   strftime(m_time_text, sizeof(m_time_text), "%M", tick_time);
-  text_layer_set_text(app->view->text_layers[MIN], m_time_text);
+  view_minute_text_update(app->view, m_time_text);
 }
 
 

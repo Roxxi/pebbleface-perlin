@@ -5,13 +5,13 @@
 static WatchfaceApp* app;
 
 void handle_init(void) {
-  app = init_watchface_app();
-  watchface_app_update(app);
+  app = watchface_app_init();
+  watchface_app_bootstrap(app);
 }
  
 
 void handle_deinit(void) {
-  deinit_watchface_app(app);
+  watchface_app_deinit(app);
 }
 
 int main(void) {

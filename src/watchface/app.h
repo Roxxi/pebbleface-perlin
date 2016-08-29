@@ -1,7 +1,6 @@
 #pragma once
 
 #include <pebble.h>
-#include "perlin.h"
 #include "watchface/view.h"
 #include "watchface/state.h"
 
@@ -13,13 +12,13 @@ typedef struct {
 } WatchfaceApp;
 
 // Constructor
-WatchfaceApp* init_watchface_app();
+WatchfaceApp* watchface_app_init();
 
 // Destructor
-void deinit_watchface_app(WatchfaceApp* app);
+void watchface_app_deinit(WatchfaceApp* app);
 
-// Update screen
-void watchface_app_update(WatchfaceApp* app);
+// Bootstrap
+void watchface_app_bootstrap(WatchfaceApp* app);
 
 // Handlers
 void app_handle_apply_settings(WatchfaceApp* app);

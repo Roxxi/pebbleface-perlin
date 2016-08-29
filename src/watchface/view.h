@@ -13,16 +13,22 @@ typedef struct {
   
 } WatchfaceView;
 
-WatchfaceView* init_watchface_view();
-void deinit_watchface_view(WatchfaceView*);
+// Constructor
+WatchfaceView* watchface_view_init();
+// Destructor
+void watchface_view_deinit(WatchfaceView*);
 
-// TODO prefix view
-WatchfaceView* random_background(WatchfaceView*);
+WatchfaceView* view_show_random_background(WatchfaceView*);
+
+WatchfaceView* view_push_window(WatchfaceView*);
+
+WatchfaceView* view_hour_text_update(WatchfaceView* view, char* text);
+
+WatchfaceView* view_minute_text_update(WatchfaceView* view, char* text);
 
 WatchfaceView* view_bottom_text_show(WatchfaceView* view);
 WatchfaceView* view_bottom_text_hide(WatchfaceView* view);
 WatchfaceView* view_bottom_text_update(WatchfaceView* view, char* text);
-
 
 WatchfaceView* view_top_text_show(WatchfaceView* view);
 WatchfaceView* view_top_text_hide(WatchfaceView* view);

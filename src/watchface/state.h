@@ -14,10 +14,10 @@ typedef struct {
 } WatchfaceState;
 
 // Constructor
-WatchfaceState* init_watchface_state();
+WatchfaceState* watchface_state_init();
 
 // Desctructor
-void deinit_watchface_state(WatchfaceState*);
+void watchface_state_deinit(WatchfaceState*);
 
 /*******  Individual Settings *******/
 

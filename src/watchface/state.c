@@ -89,7 +89,7 @@ void log_state(WatchfaceState* state){
   APP_LOG(APP_LOG_LEVEL_DEBUG, "charge_percent :%d", state_read_charge_percent(state));
 }
 
-WatchfaceState* init_watchface_state(){
+WatchfaceState* watchface_state_init(){
   WatchfaceState* state = malloc(sizeof(WatchfaceState));
 
   state_load_settings(state);
@@ -102,7 +102,7 @@ WatchfaceState* init_watchface_state(){
 }
 
 
-void deinit_watchface_state(WatchfaceState* state){
+void watchface_state_deinit(WatchfaceState* state){
   free(state);
 }
 

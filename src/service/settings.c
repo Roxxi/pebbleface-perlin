@@ -5,7 +5,7 @@
 #include "watchface/view.h"
 #include "watchface/state.h"
 
-
+//TODO create app interface to remove state calls
 
 void handle_setting_showdate(Tuple* setting, WatchfaceApp* app){
   bool showdate;
